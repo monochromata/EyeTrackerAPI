@@ -1,0 +1,200 @@
+package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+
+import rit.eyeTrackingAPI.SmoothingFilters.Filter;
+
+/**
+ * An abstract class for communicating and receiving gaze sample points from an
+ * eye tracker via UDP.
+ * 
+ * @author Corey Engelman
+ * 
+ */
+public abstract class EyeTrackerClient extends Thread {
+	/**
+	 * Represents the current sample point from the eye tracker.
+	 */
+	protected Filter filter;
+	private final List<Listener> listeners = new ArrayList<Listener>();
+
+	/**
+	 * A flag for whether or not this client object is connected to the port the
+	 * eye tracker will be sending points to. Does not guarantee connection with
+	 * the eye tracker.
+	 */
+	protected boolean connected = false;
+
+	/**
+	 * Creates a new eye Tracker client instance
+	 */
+	public EyeTrackerClient() {
+		this.setName(getClass().getSimpleName());
+	}
+	
+	public void configure(Filter filter, Configuration config) {
+		this.filter = filter;
+	}
+	
+	public void addListener(Listener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(Listener listener) {
+		listeners.remove(listener);
+	}
+	
+	protected void input(String in) {
+		for(Listener l: listeners) {
+			l.input(in);
+		}
+	}
+	
+	protected void output(String out) {
+		for(Listener l: listeners) {
+			l.output(out);
+		}
+	}
+	
+	protected void info(String info) {
+		for(Listener l: listeners) {
+			l.info(info);
+		}
+	}
+	
+	protected void error(Throwable t) {
+		for(Listener l: listeners) {
+			l.error(t);
+		}
+	}
+
+	/**
+	 * The primary method of execution for this client thread.
+	 */
+	@Override
+	public void run() {
+		clientOperation();
+	}
+	
+	public Filter getFilter() {
+		return filter;
+	}
+
+	/**
+	 * A method that connects the client object to the port that it will be
+	 * receiving coordinates from the eye tracker on.
+	 */
+	public abstract void connect() throws IOException;
+
+	/**
+	 * A method that disconnects the client object from the socket it is
+	 * receiving input from the eye tracker on.
+	 */
+	public abstract void disconnect() throws IOException;
+
+	/**
+	 * An accessor for the flag "connected"
+	 * 
+	 * @return - the value of the boolean connected
+	 */
+	public abstract boolean isConnected();
+
+	/**
+	 * Toggle the eye tracker on/off without disconnecting.
+	 * 
+	 * @return Whether or not the client receives eye tracking
+	 * 		data after this method returned.
+	 */
+	public abstract boolean toggle() throws IOException;
+	
+	/**
+	 * The operation specific to receiving coordinates from the eye tracker and
+	 * passing them on to the filter should be implemented in this method.
+	 */
+	protected abstract void clientOperation();
+
+	/**
+	 * Gracefully stops the loop in the threads run method by changing the stop
+	 * flag.
+	 */
+	public abstract void requestStop();
+
+	public interface Listener {
+		public void input(String in);
+		public void output(String out);
+		public void info(String info);
+		public void error(Throwable t);
+	}
+	
+	/**
+	 * A configuration object to be passed to the IViewXComm upon
+	 * construction.
+	 * 
+	 * @author Sebastian Lohmeier <sl@monochromata.de>
+	 */
+	public static class Configuration {
+		
+		/**
+		 * The InetAddress at which the eye tracker is listening for commands.
+		 */
+		private InetAddress trackerIP;
+		
+		/**
+		 * The UDP port at which the eye tracker is listening for commands.
+		 */
+		private int trackerPort;
+		
+		/**
+		 * The local port at which the client is listening for commands.
+		 */
+		private int localPort;
+		
+		/**
+		 * The rate at which the eye tracker should sample the eye position.
+		 */
+		private int samplingRate;
+		
+		/**
+		 * Whether the transmission format of the eye tracker should be set (true)
+		 * or the format already in use by the tracker should be parsed (false).
+		 */
+		private boolean setFormat;
+		
+		public InetAddress getTrackerIP() {
+			return trackerIP;
+		}
+		public void setTrackerIP(InetAddress trackerIP) {
+			this.trackerIP = trackerIP;
+		}
+		public int getTrackerPort() {
+			return trackerPort;
+		}
+		public void setTrackerPort(int trackerPort) {
+			this.trackerPort = trackerPort;
+		}
+		public int getLocalPort() {
+			return localPort;
+		}
+		public void setLocalPort(int localPort) {
+			this.localPort = localPort;
+		}
+		public int getSamplingRate() {
+			return samplingRate;
+		}
+		public void setSamplingRate(int samplingRate) {
+			this.samplingRate = samplingRate;
+		}
+		public boolean getSetFormat() {
+			return setFormat;
+		}
+		public void setSetFormat(boolean setFormat) {
+			this.setFormat = setFormat;
+		}
+	}
+}
