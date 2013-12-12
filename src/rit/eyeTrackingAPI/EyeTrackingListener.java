@@ -19,5 +19,5 @@ public interface EyeTrackingListener {
 	 * 
 	 * @param e The eye tracking event
 	 */
-	public void notify(Event e);
+	public void notify(Event e, EyeTrackingListener listener);
 }

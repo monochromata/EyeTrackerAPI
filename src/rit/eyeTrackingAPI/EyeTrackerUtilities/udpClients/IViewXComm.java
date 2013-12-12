@@ -364,7 +364,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 																// contents
 							input(responseString);
 							responseString = responseString.trim();
-							System.out.println(responseString);
+							//System.out.println(responseString);
 							boolean matched = false;
 							Matcher rawBothMatcher = responsePatternRAWBoth.matcher(responseString);
 							if(rawBothMatcher.matches()) {

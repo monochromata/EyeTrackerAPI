@@ -23,9 +23,9 @@ public class FilterChain<T> implements EyeTrackingListener {
 		}
 	}
 	@Override
-	public void notify(Event e) {
+	public void notify(Event e, EyeTrackingListener listener) {
 		for(Filter<T> filter : filters) {
-			filter.notify(e);
+			filter.notify(e, listener);
 		}
 	}
 }

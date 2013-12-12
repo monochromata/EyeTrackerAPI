@@ -41,8 +41,19 @@ public interface Event {
 	 */
 	public static final String TRACKER_TIMESTAMP_MU = "eyetracking.api.TRACKER_TIMESTAMP_MU";
 	
+	/**
+	 * long
+	 */
 	public static final String FIXATION_START_TIMESTAMP_MS = "eyetracking.api.FIXATION_START_TIMESTAMP_MS";
+
+	/**
+	 * long
+	 */
 	public static final String FIXATION_END_TIMESTAMP_MS = "eyetracking.api.FIXATION_END_TIMESTAMP_MS";
+
+	/**
+	 * long
+	 */
 	public static final String FIXATION_DURATION_MS = "eyetracking.api.FIXATION_DURATION_MS";
 	
 	/**

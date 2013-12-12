@@ -58,7 +58,11 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * such a situation and refrain from processing of this event.
 	 * 
 	 * @param event The event to be filtered.
+	 * @param listener A listener to create new events. TODO: This parameter
+	 * 		should actually be removed and event attributes should be designed
+	 * 		to be disjoint such that e.g. a raw and a fixation location can
+	 * 		be added to the same event.
 	 * @see #getAttributesRequired()
 	 */
-	public void notify(Event event);
+	public void notify(Event event, EyeTrackingListener listener);
 }
