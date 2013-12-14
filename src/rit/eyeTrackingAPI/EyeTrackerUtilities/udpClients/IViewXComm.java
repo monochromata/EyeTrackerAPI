@@ -508,6 +508,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 					recvBuff.length);
 			mReceiveSocket.setSoTimeout(3000); // socket timeout in milliseconds, TODO: make configurable
 			mReceiveSocket.receive(recvPacket);
+			mReceiveSocket.setSoTimeout(0);
 			String pingResponse = new String(recvPacket.getData(), 0,
 					recvPacket.getLength());// receive
 			input(pingResponse);
