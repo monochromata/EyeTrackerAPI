@@ -506,6 +506,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			byte[] recvBuff = new byte[MAX_RESPONSE_SIZE_BYTES];
 			DatagramPacket recvPacket = new DatagramPacket(recvBuff,
 					recvBuff.length);
+			mReceiveSocket.setSoTimeout(3000); // socket timeout in milliseconds, TODO: make configurable
 			mReceiveSocket.receive(recvPacket);
 			String pingResponse = new String(recvPacket.getData(), 0,
 					recvPacket.getLength());// receive
