@@ -86,6 +86,8 @@ public class IViewXComm extends EyeTrackerClient {
 	
 	public static final String FORMAT_REQUEST_PREFIX		    = "ET_FRM ";
 	
+	public static final String CMD_SAMPLE_RATE					= "ET_SRT\n";
+	
 	public static final String CMD_START_DATA_PREFIX			= "ET_STR "; // can have an optional frame rate
 	public static final String CMD_START_DATA				    = "ET_STR\n";
 	public static final String CMD_STOP_DATA					= "ET_EST\n";
@@ -101,6 +103,15 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String MSG_CALIBRATION_PT_CHANGE		= "ET_CHG";
 	public static final String MSG_END_CALIBRATION			    = "ET_FIN";
 	public static final String MSG_VALIDATION					= "ET_VLS";
+	
+	public static final String CMD_START_IMAGE_STREAMING 		= "ET_SIM\n";
+	public static final String CMD_STOP_IMAGE_STREAMING			= "ET_EIM\n";
+	
+	public static final String CMD_START_IMAGE_RECORDING_PREFIX	= "ET_EVB ";
+	public static final String CMD_STOP_IMAGE_RECORDING			= "ET_EVE\n";
+	
+	public static final String CMD_START_FIXATION_DETECTION 	= "ET_FIX\n";
+	public static final String CMD_STOP_FIXATION_DETECTION 		= "ET_EFX\n";
 	
 	public static final String CMD_CALIBRATION_PARAMS			= "ET_CPA\n";
 	
@@ -521,9 +532,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			 */
 			if(setETFormat)
 				sendCommand(FORMAT_REQUEST_PREFIX+protocol.getFormatString(IViewXComm.this));
-			sendCommand("ET_EVB 1 \"eye_image\""
-				+" \"C:\\Dokumente und Einstellungen\\iView X\\Eigene Dateien\\"
-					+"ProjQU\\eyes\"\n");
+//			sendCommand("ET_EVB 1 \"eye_image\""
+//				+" \"C:\\Dokumente und Einstellungen\\iView X\\Eigene Dateien\\"
+//					+"ProjQU\\eyes\"\n");
 			
 			state = new Connected();
 		}
@@ -564,7 +575,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		@Override
 		public void disconnect() throws IOException {
 			protocol.stopTracking(IViewXComm.this);
-			sendCommand("ET_EVE\n");
+//			sendCommand("ET_EVE\n");
 			mSendSocket.close();
 			mReceiveSocket.close();
 			connected = false;

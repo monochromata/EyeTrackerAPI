@@ -5,6 +5,9 @@ import java.io.IOException;
 /**
  * Implemented by plugins that handle communication with specific devices
  * of SMI's iViewX family of devices.
+ * 
+ * TODO: Add support for eye image recording with a duration in milliseconds
+ * 		to support lossless (buffered) recording for a limited duration.
  */
 public interface IViewXProtocol {
 	
