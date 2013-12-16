@@ -521,6 +521,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			 */
 			if(setETFormat)
 				sendCommand(FORMAT_REQUEST_PREFIX+protocol.getFormatString(IViewXComm.this));
+			sendCommand("ET_EVB 1 \"eye_image\""
+				+" \"C:\\Dokumente und Einstellungen\\iView X\\Eigene Dateien\\"
+					+"ProjQU\\eyes\"\n");
 			
 			state = new Connected();
 		}
@@ -561,6 +564,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		@Override
 		public void disconnect() throws IOException {
 			protocol.stopTracking(IViewXComm.this);
+			sendCommand("ET_EVE\n");
 			mSendSocket.close();
 			mReceiveSocket.close();
 			connected = false;
