@@ -59,6 +59,8 @@ public abstract class EyeTrackingMediator {
 	 *            - the display being used
 	 */
 	public EyeTrackingMediator(Filter filter, int display) {
+		if(filter == null)
+			throw new NullPointerException("filter is null");
 		this.filter = filter;
 		this.stimulusDisplay = display;
 

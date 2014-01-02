@@ -2,8 +2,6 @@ package rit.eyeTrackingAPI;
 
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Listener;
-
 /**
  * An event contains a map of attributes that can be extended but not modified.
  */
