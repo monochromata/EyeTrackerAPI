@@ -104,6 +104,22 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String MSG_END_CALIBRATION			    = "ET_FIN";
 	public static final String MSG_VALIDATION					= "ET_VLS";
 	
+	public static final String CMD_TRACKER_PARAMETER_PREFIX 	= "ET_SFT ";
+	public static final String PARAM_LEFT_EYE			        = "0";
+	public static final String PARAM_RIGHT_EYE			     	= "1";
+	public static final String PARAM_PUPIL_THRESHOLD		 	= "0";
+	public static final String PARAM_REFLEX_THRESHOLD			= "1";
+	public static final String PARAM_SHOW_AOI				    = "2";
+	public static final String PARAM_SHOW_CONTOUR				= "3";
+	public static final String PARAM_SHOW_PUPIL				    = "4";
+	public static final String PARAM_SHOW_REFLEX			    = "5";
+	public static final String PARAM_DYNAMIC_THRESHOLD			= "6";
+	public static final String PARAM_PUPIL_AREA 				= "11";
+	public static final String PARAM_PUPIL_PERIMETER			= "12";
+	public static final String PARAM_PUPIL_DENSITY			    = "13";
+	public static final String PARAM_REFLEX_PERIMETER			= "14";
+	public static final String PARAM_REFLEX_PUPIL_DISTANCE	    = "15";
+	
 	public static final String CMD_START_IMAGE_STREAMING 		= "ET_SIM\n";
 	public static final String CMD_STOP_IMAGE_STREAMING			= "ET_EIM\n";
 	
