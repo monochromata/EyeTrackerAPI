@@ -10,6 +10,20 @@ package rit.eyeTrackingAPI;
  */
 public interface EyeTrackingListener {
 	
+	public enum Mode {
+		TRACKING_MODE, REPLAY_MODE;
+	
+		public String toString() {
+			if(TRACKING_MODE == this) {
+				return "TRACKING_MODE";
+			} else if(REPLAY_MODE == this) {
+				return "REPLAY_MODE";
+			} else {
+				return super.toString();
+			}
+		}
+	};
+	
 	/**
 	 * Notifies the listener of the given eye tracking event.
 	 * 
@@ -19,5 +33,5 @@ public interface EyeTrackingListener {
 	 * 
 	 * @param e The eye tracking event
 	 */
-	public void notify(Event e, EyeTrackingListener listener);
+	public void notify(Event e, EyeTrackingListener listener, Mode mode);
 }

@@ -1,8 +1,8 @@
 package rit.eyeTrackingAPI;
 
 public interface Filter<T> extends EyeTrackingListener {
-	public void start(T obj);
-	public void stop(T obj);
+	public void start(T obj, Mode mode);
+	public void stop(T obj, Mode mode);
 	
 	/**
 	 * Return the names of attributes that this filter requires
@@ -62,7 +62,8 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * 		should actually be removed and event attributes should be designed
 	 * 		to be disjoint such that e.g. a raw and a fixation location can
 	 * 		be added to the same event.
+	 * @param mode Either TRACKING_MODE or REPLAY_MODE
 	 * @see #getAttributesRequired()
 	 */
-	public void notify(Event event, EyeTrackingListener listener);
+	public void notify(Event event, EyeTrackingListener listener, Mode mode);
 }

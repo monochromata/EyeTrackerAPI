@@ -7,6 +7,8 @@ import java.awt.Point;
 import java.awt.event.ActionListener;
 
 import rit.eyeTrackingAPI.Event;
+import rit.eyeTrackingAPI.EyeTrackingListener;
+import rit.eyeTrackingAPI.EyeTrackingListener.Mode;
 import rit.eyeTrackingAPI.SmoothingFilters.Filter;
 
 /*import rit.hbir.multitouch.*;
@@ -122,7 +124,7 @@ public abstract class EyeTrackingMediator {
 	 * @param newGazePoint
 	 *            - the new point from the eye tracker
 	 */
-	protected abstract void fire(Event e);
+	protected abstract void fire(Event e, Mode mode);
 
 	/*
 	 * try{ MTCanvas can = mtApp.getCurrentScene().getCanvas();
@@ -170,7 +172,7 @@ public abstract class EyeTrackingMediator {
 					synchronized (filter) {
 						Event e = filter.getNewEvent();
 						if(e != null) {
-							fire(e);
+							fire(e, EyeTrackingListener.Mode.TRACKING_MODE);
 						}
 						filter.notifyEventRead();
 						filter.waitForNewEvent();
@@ -185,7 +187,7 @@ public abstract class EyeTrackingMediator {
 
 				} else {
 					// TODO: Why that?
-					fire(null);
+					fire(null, EyeTrackingListener.Mode.TRACKING_MODE);
 				}
 
 			}
