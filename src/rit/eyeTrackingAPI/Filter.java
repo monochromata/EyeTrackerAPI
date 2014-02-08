@@ -1,8 +1,14 @@
 package rit.eyeTrackingAPI;
 
+/**
+ * TODO: Maybe remove the constrains on attributes / replace them by
+ * constraints on event types.
+ * 
+ * @param <T>
+ */
 public interface Filter<T> extends EyeTrackingListener {
-	public void start(T obj, Mode mode);
-	public void stop(T obj, Mode mode);
+	public void start(T obj, EyeTrackingListener listener, Mode mode);
+	public void stop(T obj, EyeTrackingListener listener, Mode mode);
 	
 	/**
 	 * Return the names of attributes that this filter requires

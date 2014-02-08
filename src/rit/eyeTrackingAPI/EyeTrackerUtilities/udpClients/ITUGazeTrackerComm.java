@@ -43,12 +43,11 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 				String[] tokens = gtString.split(" ");
 
 				if (toggleOn) {
-					// TODO: provide tracker attributes
 					Map<String,Object> attr = new HashMap<String,Object>();
 					attr.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 					attr.put(Event.POR_X, (int)Double.parseDouble(tokens[2]));
 					attr.put(Event.POR_Y, (int) Double.parseDouble(tokens[3]));
-					filter.filter(new EventImpl(attr));
+					filter.filter(new EventImpl(Event.RAW_EVENT, attr));
 				}
 			}
 		}

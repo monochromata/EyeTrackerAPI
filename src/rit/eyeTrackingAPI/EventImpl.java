@@ -5,12 +5,19 @@ import java.util.Map;
 
 public class EventImpl implements Event {
 	
+	private final ID id;
 	private final Map<String,Object> attributes;
 	
-	public EventImpl(Map<String,Object> initialAttributes) {
+	public EventImpl(ID id, Map<String,Object> initialAttributes) {
+		this.id = id;
 		this.attributes = initialAttributes;
 	}
 
+	@Override
+	public ID getID() {
+		return id;
+	}
+	
 	@Override
 	public void addAttribute(String name, Object value) {
 		attributes.put(name, value);
@@ -29,6 +36,11 @@ public class EventImpl implements Event {
 	@Override
 	public void clear() {
 		attributes.clear();
+	}
+
+	@Override
+	public String toString() {
+		return id.toString()+" "+attributes.toString();
 	}
 
 }

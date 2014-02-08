@@ -399,7 +399,6 @@ INFO:eyetracking.api.RAW_EVENT parsed
 								map.put(Event.TRACKER_TIMESTAMP_MU, Long.parseLong(rawBothMatcher.group("TU")));
 								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 								map.put(Event.EYE_TYPE, "b");
-								map.put(Event.RAW_EVENT, true);
 								map.put(Event.POR_X, Integer.parseInt(rawBothMatcher.group("SX")));
 								map.put(Event.POR_Y, Integer.parseInt(rawBothMatcher.group("SY")));
 								map.put(Event.PUPIL_DIA_L_PX, Float.parseFloat(rawBothMatcher.group("DL")));
@@ -433,7 +432,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 								if(groupCYR != null)
 									map.put(Event.CORNEAL_REFLEX_POS_Y_R, Float.parseFloat(groupCYR));
 								
-								Event e = new EventImpl(map);
+								Event e = new EventImpl(Event.RAW_EVENT, map);
 								filter.filter(e);
 								matched = true;
 								info(Event.RAW_EVENT+" parsed\n");
@@ -446,10 +445,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(Event.FIXATION_START_TIMESTAMP_MS, Long.parseLong(fixStartMatcher.group("TU"))/1000L);
 									map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 									map.put(Event.EYE_TYPE, fixStartMatcher.group("ET"));
-									map.put(Event.FIXATION_START, true);
 									map.put(Event.POR_X, (int)Float.parseFloat(fixStartMatcher.group("SX")));
 									map.put(Event.POR_Y, (int)Float.parseFloat(fixStartMatcher.group("SY")));
-									Event e = new EventImpl(map);
+									Event e = new EventImpl(Event.FIXATION_START, map);
 									filter.filter(e);
 									matched = true;
 									info(Event.FIXATION_START+" parsed\n");
@@ -465,10 +463,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(Event.FIXATION_DURATION_MS, Long.parseLong(fixEndMatcher.group("DU")));
 									map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 									map.put(Event.EYE_TYPE, fixEndMatcher.group("ET"));
-									map.put(Event.FIXATION_END, true);
 									map.put(Event.POR_X, (int)Float.parseFloat(fixEndMatcher.group("SX")));
 									map.put(Event.POR_Y, (int)Float.parseFloat(fixEndMatcher.group("SY")));
-									Event e = new EventImpl(map);
+									Event e = new EventImpl(Event.FIXATION_END, map);
 									filter.filter(e);
 									matched = true;
 									info(Event.FIXATION_END+" parsed\n");

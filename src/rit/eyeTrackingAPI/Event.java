@@ -88,7 +88,7 @@ public interface Event {
 	 * @see #FIXATION_START
 	 * @see #FIXATION_END
 	 */
-	public static final String RAW_EVENT = "eyetracking.api.RAW_EVENT";
+	public static final ID RAW_EVENT = new IDImpl("eyetracking.api.RAW_EVENT");
 	
 	/**
 	 * Name of the vendor-neutral standard {@link Boolean} attribute
@@ -105,7 +105,7 @@ public interface Event {
 	 * @see #FIXATION_END
 	 * @see #RAW_EVENT
 	 */
-	public static final String FIXATION_START = "eyetracking.api.FIXATION_START";
+	public static final ID FIXATION_START = new IDImpl("eyetracking.api.FIXATION_START");
 	
 	/**
 	 * Name of the vendor-neutral standard {@link Boolean} attribute
@@ -122,7 +122,7 @@ public interface Event {
 	 * @see #FIXATION_START
 	 * @see #RAW_EVENT
 	 */
-	public static final String FIXATION_END = "eyetracking.api.FIXATION_END";
+	public static final ID FIXATION_END = new IDImpl("eyetracking.api.FIXATION_END");
 
 	/**
 	 * Name of the vendor-neutral standard {@link Integer} attribute
@@ -269,6 +269,13 @@ public interface Event {
 	public static final String CORNEAL_REFLEX_POS_Y_R = "eyetracking.api.CR_POS_Y_R";
 	
 	/**
+	 * Returns the {@link ID} that identified the type of event.
+	 * 
+	 * @return The identifier of the event type.
+	 */
+	public ID getID();
+	
+	/**
 	 * Adds an attribute to the event.
 	 * 
 	 * @param name
@@ -313,4 +320,53 @@ public interface Event {
 	 * Release all resources associated with the event.
 	 */
 	public void clear();
+	
+	/**
+	 * An identifier for event types.
+	 * 
+	 * @author monochromata
+	 */
+	public interface ID {
+		
+		/**
+		 * Returns a fully-qualified name of the event type identified by the
+		 * given id. The hash code of this fully-qualified id shall be used to
+		 * identify events of this type in persistent representations.
+		 * 
+		 * @return A fully-qualified event type name
+		 * 
+		 * @see Object#hashCode()
+		 */
+		public String getFullyQualifiedID();
+	}
+	
+	public class IDImpl implements ID {
+		private final String id;
+		private final int hashCode;
+		
+		public IDImpl(String id) {
+			this.id = id;
+			this.hashCode = id.hashCode();
+		}
+
+		@Override
+		public String getFullyQualifiedID() {
+			return id;
+		}
+		
+		@Override
+		public int hashCode() {
+			return hashCode;
+		}
+		
+		@Override
+		public boolean equals(Object other) {
+			return other != null && other instanceof ID && other.hashCode() == hashCode();
+		}
+		
+		@Override
+		public String toString() {
+			return id;
+		}
+	}
 }
