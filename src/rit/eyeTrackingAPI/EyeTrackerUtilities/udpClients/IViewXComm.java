@@ -126,7 +126,8 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String CMD_START_IMAGE_RECORDING_PREFIX	= "ET_EVB ";
 	public static final String CMD_STOP_IMAGE_RECORDING			= "ET_EVE\n";
 	
-	public static final String CMD_START_FIXATION_DETECTION 	= "ET_FIX\n";
+	public static final String CMD_START_FIXATION_DETECTION 	= "ET_FIX\n"; // used by REDm / respective iViewX version
+	public static final String CMD_START_FIXATION_DETECTION_PREFIX = "ET_FIX "; // used by RED5 / respective iViewX version
 	public static final String CMD_STOP_FIXATION_DETECTION 		= "ET_EFX\n";
 	
 	public static final String CMD_CALIBRATION_PARAMS			= "ET_CPA\n";
