@@ -23,6 +23,7 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * @return An array of attribute names
 	 * @see #notify(Event)
 	 * @see #getAttributesDesired()
+	 * @deprecated
 	 */
 	public String[] getAttributesRequired();
 	
@@ -37,6 +38,7 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * @return An array of attribute names
 	 * @see #notify(Event)
 	 * @see #getAttributesRequired()
+	 * @deprecated
 	 */
 	public String[] getAttributesDesired();
 	
@@ -46,6 +48,7 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * actually have instance of these attributes.
 	 * 
 	 * @return An array of attribute names
+	 * @deprecated
 	 */
 	public String[] getAttributesCreated();
 	

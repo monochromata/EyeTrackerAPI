@@ -91,17 +91,17 @@ public interface Event {
 	/**
 	 * long
 	 */
-	public static final String FIXATION_START_TIMESTAMP_MS = "eyetracking.api.FIXATION_START_TIMESTAMP_MS";
+	public static final String FIXATION_START_TIMESTAMP_MS = "FIX_START_MS";
 
 	/**
 	 * long
 	 */
-	public static final String FIXATION_END_TIMESTAMP_MS = "eyetracking.api.FIXATION_END_TIMESTAMP_MS";
+	public static final String FIXATION_END_TIMESTAMP_MS = "FIX_END_MS";
 
 	/**
 	 * long
 	 */
-	public static final String FIXATION_DURATION_MS = "eyetracking.api.FIXATION_DURATION_MS";
+	public static final String FIXATION_DURATION_MS = "FIX_DUR_MS";
 	
 	/**
 	 * Name of the vendor-neutral standard {@link Long} attribute
@@ -130,7 +130,7 @@ public interface Event {
 	 * The attribute is present at least for {@link #RAW}, {@link #FIXATION_START}
 	 * and {@link #FIXATION_END} events.
 	 */
-	public static final String POR_X = "eyetracking.api.POR_X";
+	public static final String POR_X = "POR_X";
 	
 	/**
 	 * Name of the vendor-neutral standard {@link Integer} attribute
@@ -138,7 +138,7 @@ public interface Event {
 	 * The attribute is present at least for {@link #RAW}, {@link #FIXATION_START}
 	 * and {@link #FIXATION_END} events.
 	 */
-	public static final String POR_Y = "eyetracking.api.POR_Y";
+	public static final String POR_Y = "POR_Y";
 
 	/**
 	 * Name of the vendor-neutral standard {@link Float} attribute
