@@ -4,6 +4,8 @@ import java.util.Map;
 
 /**
  * An event contains a map of attributes that can be extended but not modified.
+ * 
+ * TODO: Remove dependency on TET attributes by using subclasses as events
  */
 public interface Event {
 	
@@ -267,6 +269,32 @@ public interface Event {
 	 * {@link Float} value with y coordinate of position of right-eye corneal reflex in pixels.
 	 */
 	public static final String CORNEAL_REFLEX_POS_Y_R = "eyetracking.api.CR_POS_Y_R";
+	
+	
+	
+	
+
+	public static final String TET_STATE = "tet.STATE";
+	public static final String TET_POR_RAW_X = "tet.POR_RAW_X";
+	public static final String TET_POR_RAW_Y = "tet.POR_RAW_Y";
+	public static final String TET_POR_SMOOTHED_X = "tet.POR_SMOOTHED_X";
+	public static final String TET_POR_SMOOTHED_Y = "tet.POR_SMOOTHED_Y";
+	public static final String TET_PUPIL_SIZE_L = "tet.PUPIL_SIZE_L";
+	public static final String TET_PUPIL_SIZE_R = "tet.PUPIL_SIZE_R";
+	public static final String TET_PUPIL_LR_DISTANCE = "tet.PUPIL_LR_DISTANCE";
+	public static final String TET_PUPIL_CENTER_L_X = "tet.PUPIL_CENTER_L_X";
+	public static final String TET_PUPIL_CENTER_L_Y = "tet.PUPIL_CENTER_L_Y";
+	public static final String TET_PUPIL_CENTER_R_X = "tet.PUPIL_CENTER_R_X";
+	public static final String TET_PUPIL_CENTER_R_Y = "tet.PUPIL_CENTER_R_Y";
+	public static final String TET_POR_RAW_L_X = "tet.POR_RAW_L_X";
+	public static final String TET_POR_RAW_L_Y = "tet.POR_RAW_L_Y";
+	public static final String TET_POR_RAW_R_X = "tet.POR_RAW_R_X";
+	public static final String TET_POR_RAW_R_Y = "tet.POR_RAW_R_Y";
+	public static final String TET_POR_SMOOTHED_L_X = "tet.POR_SMOOTHED_L_X";
+	public static final String TET_POR_SMOOTHED_L_Y = "tet.POR_SMOOTHED_L_Y";
+	public static final String TET_POR_SMOOTHED_R_X = "tet.POR_SMOOTHED_R_X";
+	public static final String TET_POR_SMOOTHED_R_Y = "tet.POR_SMOOTHED_R_Y";
+	
 	
 	/**
 	 * Returns the {@link ID} that identified the type of event.
