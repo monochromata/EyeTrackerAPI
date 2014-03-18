@@ -3,6 +3,7 @@ package rit.eyeTracking.EyeTrackerUtilities.calibration;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -34,8 +35,16 @@ public class SWTCalibration {
 		paintListener.newCross(x, y);
 	}
 	
+	public void newWord(String word, int x, int y) {
+		paintListener.newWord(word, x, y);
+	}
+	
 	public void resetCross() {
 		paintListener.resetCross();
+	}
+	
+	public void resetWord() {
+		paintListener.resetWord();
 	}
 	
 	public boolean isActive() {
@@ -60,6 +69,8 @@ public class SWTCalibration {
 		
 		private Color black;
 		private int[] cross;
+		private String word;
+		private int wordX, wordY;
 		
 		private GamePaintListener(final Shell shell) {
 			shell.getDisplay().syncExec(new Runnable() {
@@ -99,16 +110,29 @@ public class SWTCalibration {
 			cross = null;
 		}
 		
+		public void newWord(String word, int x, int y) {
+			this.word = word;
+			this.wordX = x;
+			this.wordY = y;
+		}
+		
+		public void resetWord() {
+			word = null;
+		}
+		
 		@Override
 		public void paintControl(PaintEvent e) {
 			if(cross != null) {
 				// Paint fixation cross for current RFL
 				Color bc = e.gc.getBackground();
-				Color fc = e.gc.getForeground();
 				e.gc.setBackground(black);
 				e.gc.fillPolygon(cross);
 				e.gc.setBackground(bc);
-				e.gc.setForeground(fc);
+			}
+			if(word != null) {
+				// Draw a centered word
+				Point extent = e.gc.textExtent(word);
+				e.gc.drawString(word, wordX-(extent.x/2), wordY-(extent.y/2));
 			}
 		}
 		
