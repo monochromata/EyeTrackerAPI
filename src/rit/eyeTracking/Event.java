@@ -58,6 +58,12 @@ public interface Event {
 	 */
 	public static final ID FIXATION_END = new IDImpl("FE");
 	
+	/**
+	 * A blink event to be detected when a single data sample or a short
+	 * sequence of data samples does not contain eye coordinates.
+	 */
+	public static final ID BLINK = new IDImpl("BL");
+	
 	// TODO: It may be desirable to provide microsecond-timestamps in the future
 	
 	/**
