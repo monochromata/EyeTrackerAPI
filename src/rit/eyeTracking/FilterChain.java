@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;
 
 /**
  * Maintains the connections between sources, filters and drains.

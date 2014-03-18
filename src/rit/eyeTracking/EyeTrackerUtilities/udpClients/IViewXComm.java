@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -18,9 +18,9 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 
-import rit.eyeTrackingAPI.Event;
-import rit.eyeTrackingAPI.EventImpl;
-import rit.eyeTrackingAPI.SmoothingFilters.Filter;
+import rit.eyeTracking.Event;
+import rit.eyeTracking.EventImpl;
+import rit.eyeTracking.SmoothingFilters.Filter;
 
 /**
  * A class used to set up communication with the mTrackerServerCommandAddress
@@ -293,17 +293,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	public boolean toggle() throws IOException {
 		return state.toggle();
 	}
-	
-	/**
-	 * Performs calibration and starts eye tracking, if calibration was successful.
-	 * 
-	 * @return True, if calibration was successful and calibration was started,
-	 * 		false otherwise.
-	 */
-	public void calibrateAndStartTracking() throws IOException {
-		state.calibrateAndStartTracking();
-	}
 
+	@Override
+	public void calibrate(CalibrationListener listener) throws IOException {
+		state.calibrate(listener);
+	}
+	
 	/**
 	 * A means of stopping this thread.
 	 */
@@ -505,7 +500,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public abstract void disconnect() throws IOException;
 		public abstract boolean isConnected();
 		public abstract boolean toggle() throws IOException;
-		public abstract void calibrateAndStartTracking() throws IOException;
+		public abstract void calibrate(CalibrationListener listener) throws IOException;
 	}
 	
 	private class Disconnected extends State {
@@ -569,7 +564,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrateAndStartTracking() {
+		public void calibrate(CalibrationListener listener) throws IOException {
 			throw new IllegalStateException();
 		}
 		
@@ -608,15 +603,18 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrateAndStartTracking() throws IOException {
-			state = new Calibrating();
+		public void calibrate(CalibrationListener listener) throws IOException {
+			state = new Calibrating(listener);
 		}
 		
 	}
 	
 	private class Calibrating extends Connected {
 		
-		private Calibrating() throws IOException {
+		private final CalibrationListener calibrationListener;
+		
+		private Calibrating(CalibrationListener listener) throws IOException {
+			this.calibrationListener = listener;
 			LoggingMessageListener lml = new LoggingMessageListener();
 			addMessageListener(MSG_CALIBRATION_PT_CHANGE, lml);
 			addMessageListener(MSG_VALIDATION, lml);
@@ -642,7 +640,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrateAndStartTracking() {
+		public void calibrate(CalibrationListener listener) {
 			throw new IllegalStateException();
 		}
 		
@@ -657,7 +655,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrateAndStartTracking() {
+		public void calibrate(CalibrationListener listener) {
 			throw new IllegalStateException();
 		}
 		

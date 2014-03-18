@@ -1,6 +1,6 @@
-package rit.eyeTrackingAPI.SmoothingFilters;
+package rit.eyeTracking.SmoothingFilters;
 
-import rit.eyeTrackingAPI.Event;
+import rit.eyeTracking.Event;
 
 /**
  * Perform no filtering and pass on raw gaze data.
@@ -19,6 +19,7 @@ public class NoFilter extends Filter {
 			try {
 				wait();
 			} catch (InterruptedException ie) {
+				System.err.println("NoFilter: interrupted while waiting for e="+e.getID()+" to be filtered");
 				ie.printStackTrace();
 			}
 		}

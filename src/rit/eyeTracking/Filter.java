@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;
 
 /**
  * TODO: Maybe remove the constrains on attributes / replace them by

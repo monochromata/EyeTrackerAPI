@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.SmoothingFilters;
+package rit.eyeTracking.SmoothingFilters;
 
 public class Regression {
 	static double rsquared = 0;

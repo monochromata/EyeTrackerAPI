@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: EyeTrackerAPI
 Bundle-SymbolicName: EyeTrackerAPI;singleton:=true
 Bundle-Version: 0.1.5
-Bundle-Activator: rit.eyeTrackingAPI.Activator
+Bundle-Activator: rit.eyeTracking.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
@@ -35,12 +35,12 @@ Export-Package: com.lmax.disruptor,
  org.apache.logging.log4j.spi,
  org.apache.logging.log4j.status,
  org.apache.logging.log4j.util,
- rit.eyeTrackingAPI,
- rit.eyeTrackingAPI.ApplicationUtilities,
- rit.eyeTrackingAPI.DataConstructs,
- rit.eyeTrackingAPI.EyeTrackerUtilities.calibration,
- rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients,
- rit.eyeTrackingAPI.SmoothingFilters
+ rit.eyeTracking,
+ rit.eyeTracking.ApplicationUtilities,
+ rit.eyeTracking.DataConstructs,
+ rit.eyeTracking.EyeTrackerUtilities.calibration,
+ rit.eyeTracking.EyeTrackerUtilities.udpClients,
+ rit.eyeTracking.SmoothingFilters
 Bundle-ClassPath: lib/log4j-api-2.0-beta4.jar,
  lib/log4j-core-2.0-beta4.jar,
  .,

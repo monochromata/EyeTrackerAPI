@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.DataConstructs;
+package rit.eyeTracking.DataConstructs;
 
 import java.awt.Point;
 

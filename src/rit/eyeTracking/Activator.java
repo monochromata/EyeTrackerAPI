@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

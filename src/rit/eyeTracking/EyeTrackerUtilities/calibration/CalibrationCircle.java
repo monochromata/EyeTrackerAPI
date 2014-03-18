@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.calibration;
+package rit.eyeTracking.EyeTrackerUtilities.calibration;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

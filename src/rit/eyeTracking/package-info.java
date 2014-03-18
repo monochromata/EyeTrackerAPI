@@ -5,4 +5,4 @@
  * @author monochromata
  *
  */
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;

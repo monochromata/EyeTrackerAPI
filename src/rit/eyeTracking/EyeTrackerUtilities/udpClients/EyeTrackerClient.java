@@ -1,11 +1,11 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import rit.eyeTrackingAPI.SmoothingFilters.Filter;
+import rit.eyeTracking.SmoothingFilters.Filter;
 
 /**
  * An abstract class for communicating and receiving gaze sample points from an
@@ -109,6 +109,17 @@ public abstract class EyeTrackerClient extends Thread {
 	 * 		data after this method returned.
 	 */
 	public abstract boolean toggle() throws IOException;
+	
+	/**
+	 * Start calibration procedure. This method should only start calibration
+	 * and return immediately.
+	 * 
+	 * @param listener 
+	 * @throws IOException In an error occurs while calibration is started
+	 * @throws UnsupportedOperationException If the client does not support calibration.
+	 */
+	public abstract void calibrate(CalibrationListener listener)
+			throws IOException, UnsupportedOperationException;
 	
 	/**
 	 * The operation specific to receiving coordinates from the eye tracker and

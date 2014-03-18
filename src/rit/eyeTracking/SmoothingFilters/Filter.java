@@ -1,6 +1,6 @@
-package rit.eyeTrackingAPI.SmoothingFilters;
+package rit.eyeTracking.SmoothingFilters;
 
-import rit.eyeTrackingAPI.Event;
+import rit.eyeTracking.Event;
 
 /**
  * A class representing a filtering algorithm for smoothing jittery raw data
@@ -13,8 +13,8 @@ import rit.eyeTrackingAPI.Event;
  */
 public abstract class Filter {
 	
-	public static final String FILTERED_POR_X = "rit.eyeTrackingAPI.SmoothingFilters.FILTERED_POR_X";
-	public static final String FILTERED_POR_Y = "rit.eyeTrackingAPI.SmoothingFilters.FILTERED_POR_Y";
+	public static final String FILTERED_POR_X = "rit.eyeTracking.SmoothingFilters.FILTERED_POR_X";
+	public static final String FILTERED_POR_Y = "rit.eyeTracking.SmoothingFilters.FILTERED_POR_Y";
 
 	protected int filterIntensity = 0;
 	protected int filterCounter = 0;

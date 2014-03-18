@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;
 
 import java.util.Collections;
 import java.util.Map;

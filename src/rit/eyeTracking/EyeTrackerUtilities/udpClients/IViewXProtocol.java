@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import java.io.IOException;
 

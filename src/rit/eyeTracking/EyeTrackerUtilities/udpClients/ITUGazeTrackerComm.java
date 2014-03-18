@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -9,8 +9,8 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
-import rit.eyeTrackingAPI.Event;
-import rit.eyeTrackingAPI.EventImpl;
+import rit.eyeTracking.Event;
+import rit.eyeTracking.EventImpl;
 
 public class ITUGazeTrackerComm extends EyeTrackerClient {
 	private DatagramSocket ds;
@@ -98,8 +98,10 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 		}
 		return connected;
 	}
-	
-	public void calibrateAndStartTracking() {
-		throw new RuntimeException("Not implemented");
+
+	@Override
+	public void calibrate(CalibrationListener listener)
+			throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
 	}
 }

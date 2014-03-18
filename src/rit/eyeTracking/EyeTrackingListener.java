@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI;
+package rit.eyeTracking;
 
 /**
  * Implemented by objects that want to be notified of eye tracking
@@ -11,10 +11,12 @@ package rit.eyeTrackingAPI;
 public interface EyeTrackingListener {
 	
 	public enum Mode {
-		TRACKING_MODE, REPLAY_MODE;
+		CALIBRATION_MODE, TRACKING_MODE, REPLAY_MODE;
 	
 		public String toString() {
-			if(TRACKING_MODE == this) {
+			if(CALIBRATION_MODE == this) {
+				return "CALIBRATION_MODE";
+			} else if(TRACKING_MODE == this) {
 				return "TRACKING_MODE";
 			} else if(REPLAY_MODE == this) {
 				return "REPLAY_MODE";

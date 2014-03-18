@@ -1,8 +1,8 @@
-package rit.eyeTrackingAPI.ApplicationUtilities;
+package rit.eyeTracking.ApplicationUtilities;
 
 import javax.swing.JFrame;
 
-import rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients.EyeTrackerClient;
+import rit.eyeTracking.EyeTrackerUtilities.udpClients.EyeTrackerClient;
 
 /**
  * This class represents an application using eye tracking. The class has a

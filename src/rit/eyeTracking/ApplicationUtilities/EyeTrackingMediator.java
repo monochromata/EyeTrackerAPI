@@ -1,4 +1,4 @@
-package rit.eyeTrackingAPI.ApplicationUtilities;
+package rit.eyeTracking.ApplicationUtilities;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -6,10 +6,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 
-import rit.eyeTrackingAPI.Event;
-import rit.eyeTrackingAPI.EyeTrackingListener;
-import rit.eyeTrackingAPI.EyeTrackingListener.Mode;
-import rit.eyeTrackingAPI.SmoothingFilters.Filter;
+import rit.eyeTracking.Event;
+import rit.eyeTracking.EyeTrackingListener;
+import rit.eyeTracking.EyeTrackingListener.Mode;
+import rit.eyeTracking.SmoothingFilters.Filter;
 
 /*import rit.hbir.multitouch.*;
  import rit.hbir.multitouch.scenes.ImageScene;
@@ -34,6 +34,7 @@ import rit.eyeTrackingAPI.SmoothingFilters.Filter;
 public abstract class EyeTrackingMediator {
 
 	// protected volatile ArrayList drawables = new ArrayList();
+	protected EyeTrackingListener.Mode mode;
 	protected Runnable runnable;
 	protected Thread thread;
 	protected boolean cursorVisible = true;
@@ -172,7 +173,7 @@ public abstract class EyeTrackingMediator {
 					synchronized (filter) {
 						Event e = filter.getNewEvent();
 						if(e != null) {
-							fire(e, EyeTrackingListener.Mode.TRACKING_MODE);
+							fire(e, mode);
 						}
 						filter.notifyEventRead();
 						filter.waitForNewEvent();
@@ -187,7 +188,7 @@ public abstract class EyeTrackingMediator {
 
 				} else {
 					// TODO: Why that?
-					fire(null, EyeTrackingListener.Mode.TRACKING_MODE);
+					fire(null, mode);
 				}
 
 			}
@@ -208,9 +209,11 @@ public abstract class EyeTrackingMediator {
 	/**
 	 * Creates a new thread and renderingLoop object and then starts the thread.
 	 */
-	public synchronized void start() {// throws GLException{
+	public synchronized void start(EyeTrackingListener.Mode mode) {// throws GLException{
 
 		if (runnable == null) {
+			this.mode = mode;
+			
 			runnable = new RenderingLoop();
 
 			thread = new Thread(runnable);
@@ -238,6 +241,8 @@ public abstract class EyeTrackingMediator {
 	public synchronized void stop() {
 		shouldStop = true;
 		notifyAll();
+		runnable = null;
+		thread = null;
 
 		/* TODO: Why wait here?
 		while (shouldStop && thread != null) {

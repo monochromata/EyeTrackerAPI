@@ -1,6 +1,7 @@
-package rit.eyeTrackingAPI.EyeTrackerUtilities.udpClients;
+package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 public interface CalibrationListener {
+	
 	/**
 	 * To be invoked by the implementation of {@link IViewXProtocol#calibrate(IViewXComm, boolean)}
 	 * when calibration and validation have been completed successfully.
