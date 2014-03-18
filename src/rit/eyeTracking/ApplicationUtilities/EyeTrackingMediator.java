@@ -213,6 +213,7 @@ public abstract class EyeTrackingMediator {
 
 		if (runnable == null) {
 			this.mode = mode;
+			shouldStop = false;
 			
 			runnable = new RenderingLoop();
 
