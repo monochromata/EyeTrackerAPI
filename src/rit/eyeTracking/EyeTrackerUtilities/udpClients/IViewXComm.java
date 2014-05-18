@@ -92,6 +92,12 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String CMD_START_DATA				    = "ET_STR\n";
 	public static final String CMD_STOP_DATA					= "ET_EST\n";
 	
+	public static final String CMD_START_RECORDING			    = "ET_REC\n";
+	public static final String CMD_CONTINUE_RECORDING			= "ET_CNT\n";
+	public static final String CMD_PAUSE_RECORDING			    = "ET_PSE\n";
+	public static final String CMD_STOP_RECORDING			    = "ET_STP\n";
+	public static final String CMD_INC_TRIAL_NUMBER				= "ET_INC\n";
+	
 	public static final String CMD_START_5_PT_CALIBRATION		= "ET_CAL 5\n";
 	public static final String CMD_CANCEL_CALIBRATION			= "ET_BRK\n";
 	public static final String CMD_ACCEPT_CALIBRATION_POINT    	= "ET_ACC\n";
