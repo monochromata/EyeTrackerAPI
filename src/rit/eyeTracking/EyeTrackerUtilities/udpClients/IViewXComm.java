@@ -98,6 +98,9 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String CMD_STOP_RECORDING			    = "ET_STP\n";
 	public static final String CMD_INC_TRIAL_NUMBER				= "ET_INC\n";
 	
+	public static final String CMD_REMARK_PREFIX				= "ET_REM ";
+	public static final String CMD_SAVE_BUFFER_PREFIX			= "ET_SAV ";
+	
 	public static final String CMD_START_5_PT_CALIBRATION		= "ET_CAL 5\n";
 	public static final String CMD_CANCEL_CALIBRATION			= "ET_BRK\n";
 	public static final String CMD_ACCEPT_CALIBRATION_POINT    	= "ET_ACC\n";
@@ -384,7 +387,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 							}*/
 							
 							if (mReceiveSocket != null) {
-								mReceiveSocket.receive(mUdpPacket);
+								try {
+									mReceiveSocket.receive(mUdpPacket);
+								} catch(SocketException se) {
+									// Socket closed while waiting for data
+								}
 							}
 
 							responseString = new String(mUdpPacket.getData(),
@@ -491,7 +498,8 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		try {
-			mReceiveSocket.close();
+			if(mReceiveSocket != null)
+				mReceiveSocket.close();
 		} catch (NullPointerException ex) {
 			error(ex);
 		}
@@ -592,7 +600,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			protocol.stopTracking(IViewXComm.this);
 //			sendCommand("ET_EVE\n");
 			mSendSocket.close();
+			mSendSocket = null;
 			mReceiveSocket.close();
+			mReceiveSocket = null;
 			connected = false;
 		}
 
