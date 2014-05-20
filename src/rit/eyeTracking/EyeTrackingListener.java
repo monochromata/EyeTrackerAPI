@@ -11,15 +11,21 @@ package rit.eyeTracking;
 public interface EyeTrackingListener {
 	
 	public enum Mode {
-		CALIBRATION_MODE, TRACKING_MODE, REPLAY_MODE;
+		RECORDING_MODE, CALIBRATION_MODE, VALIDATION_MODE, TRACKING_MODE, REPLAY_MODE, BATCH_MODE;
 	
 		public String toString() {
-			if(CALIBRATION_MODE == this) {
+			if(RECORDING_MODE == this) {
+				return "RECORDING_MODE";
+			} else if(CALIBRATION_MODE == this) {
 				return "CALIBRATION_MODE";
+			} else if(VALIDATION_MODE == this) {
+				return "VALIDATION_MODE";
 			} else if(TRACKING_MODE == this) {
 				return "TRACKING_MODE";
 			} else if(REPLAY_MODE == this) {
 				return "REPLAY_MODE";
+			} else if(BATCH_MODE == this) {
+				return "BATCH_MODE";
 			} else {
 				return super.toString();
 			}
