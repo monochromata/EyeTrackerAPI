@@ -99,6 +99,13 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 		return connected;
 	}
 
+	/**
+	 * Does nothing, tracker-internal buffer not supported.
+	 */
+	@Override
+	public void sendBufferMessage(String message) {
+	}
+	
 	@Override
 	public void calibrate(CalibrationListener listener)
 			throws UnsupportedOperationException {

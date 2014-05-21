@@ -111,6 +111,16 @@ public abstract class EyeTrackerClient extends Thread {
 	public abstract boolean toggle() throws IOException;
 	
 	/**
+	 * Send a method to the internal buffer of the eye tracker. If the eye
+	 * tracker does not have an internal buffer or the client is not
+	 * connected to the eye tracker, this method has no effect.
+	 * 
+	 * @param message The message to send to the internal buffer.
+	 * @throws IOException If an I/O problem occurs
+	 */
+	public abstract void sendBufferMessage(String message) throws IOException;
+	
+	/**
 	 * Start calibration procedure. This method should only start calibration
 	 * and return immediately.
 	 * 

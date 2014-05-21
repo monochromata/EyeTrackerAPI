@@ -361,6 +361,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	}
 
 	@Override
+	public void sendBufferMessage(String message) throws IOException {
+		state.sendBufferMessage(message);
+	}
+	
+	@Override
 	protected void clientOperation() {
 		if (!connected) {
 			throw new IllegalStateException("Not connected");
@@ -510,6 +515,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	// <editor-fold defaultstate="expanded" desc="Public Properties">
 	
 	private abstract class State {
+		public void sendBufferMessage(String message) throws IOException { }
 		public abstract void connect() throws IOException;
 		public abstract void disconnect() throws IOException;
 		public abstract boolean isConnected();
@@ -609,6 +615,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		@Override
 		public boolean isConnected() {
 			return true;
+		}
+		
+		@Override
+		public void sendBufferMessage(String message) throws IOException {
+			sendCommand(CMD_REMARK_PREFIX+"\""+message+"\"\n");
 		}
 
 		@Override
