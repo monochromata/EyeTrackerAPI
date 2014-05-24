@@ -5,6 +5,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Point;
+
+import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 import rit.eyeTracking.SmoothingFilters.Filter;
 
 /**
@@ -128,8 +131,23 @@ public abstract class EyeTrackerClient extends Thread {
 	 * @throws IOException In an error occurs while calibration is started
 	 * @throws UnsupportedOperationException If the client does not support calibration.
 	 */
-	public abstract void calibrate(CalibrationListener listener)
+	public abstract void calibrate(SWTCalibration calibration, CalibrationListener listener)
 			throws IOException, UnsupportedOperationException;
+	
+	public abstract void calibrate(int numberOfPoints, SWTCalibration calibration,
+					CalibrationListener listener)
+			throws IOException, UnsupportedOperationException;
+	
+	public abstract void abortCalibration()
+			throws IOException, UnsupportedOperationException;
+	
+	public abstract void validate(Point[] points, SWTCalibration calibration,
+					CalibrationListener listener)
+			throws IOException, UnsupportedOperationException;
+	
+	public abstract void abortValidation()
+			throws IOException, UnsupportedOperationException;
+	
 	
 	/**
 	 * The operation specific to receiving coordinates from the eye tracker and

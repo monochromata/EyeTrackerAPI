@@ -9,8 +9,11 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.graphics.Point;
+
 import rit.eyeTracking.Event;
 import rit.eyeTracking.EventImpl;
+import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 
 public class ITUGazeTrackerComm extends EyeTrackerClient {
 	private DatagramSocket ds;
@@ -107,8 +110,34 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	}
 	
 	@Override
-	public void calibrate(CalibrationListener listener)
+	public void calibrate(SWTCalibration calibration, CalibrationListener listener)
 			throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void calibrate(int numberOfPoints, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void abortCalibration() throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void validate(Point[] points, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void abortValidation() throws IOException,
+			UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 }
