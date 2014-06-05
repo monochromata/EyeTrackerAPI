@@ -105,6 +105,8 @@ public abstract class EyeTrackerClient extends Thread {
 	 */
 	public abstract boolean isConnected();
 
+	public abstract boolean isTracking();
+	
 	/**
 	 * Toggle the eye tracker on/off without disconnecting.
 	 * 

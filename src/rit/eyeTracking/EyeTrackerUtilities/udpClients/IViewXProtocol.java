@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.eclipse.swt.graphics.Point;
 
+import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
+
 /**
  * Implemented by plugins that handle communication with specific devices
  * of SMI's iViewX family of devices.
@@ -16,19 +18,6 @@ public interface IViewXProtocol {
 	public String getFormatString(IViewXComm com) throws IOException;
 	
 	public String getRAWBothResponsePattern();
-	
-	/**
-	 * Implementations should run the calibration routine of the IViewX. If validate
-	 * is true, the calibration results should be validated. This method should
-	 * return immediately. Calibration and validation should be performed in a
-	 * separate thread. When calibration and validation have been completed,
-	 * 
-	 * 
-	 * @param com The instance of the IViewXComm interface to communicate to the IViewX
-	 * @param listener The listener to inform about success/abortion of calibration/validation
-	 * @throws IOException If a network I/O error occurs during communication
-	 */
-	public void calibrate(IViewXComm com, CalibrationListener listener) throws IOException;
 
 	/**
 	 * Implementations should run the calibration routine of the IViewX. If validate
@@ -41,13 +30,15 @@ public interface IViewXProtocol {
 	 * @param listener The listener to inform about success/abortion of calibration/validation
 	 * @throws IOException If a network I/O error occurs during communication
 	 */
-	public void calibrate(IViewXComm com, int numberOfPoints, CalibrationListener listener) throws IOException;
+	public void calibrate(IViewXComm com, Point point,
+			SWTCalibration calibration, CalibrationListener listener) throws IOException;
 	
-	public void abortCalibration(IViewXComm com) throws IOException;
+	public void abortCalibration(IViewXComm com, SWTCalibration calibration) throws IOException;
 	
-	public void validate(IViewXComm com, Point[] points, CalibrationListener listener) throws IOException;
+	public void validate(IViewXComm com, Point point,
+			SWTCalibration calibration, CalibrationListener listener) throws IOException;
 	
-	public void abortValidation(IViewXComm com) throws IOException;
+	public void abortValidation(IViewXComm com, SWTCalibration calibration) throws IOException;
 	
 	/**
 	 * Implementations should tell the IViewX to start sending data, if it

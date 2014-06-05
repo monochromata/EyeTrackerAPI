@@ -17,9 +17,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
+import org.eclipse.swt.graphics.Point;
 
 import rit.eyeTracking.Event;
 import rit.eyeTracking.EventImpl;
+import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 import rit.eyeTracking.SmoothingFilters.Filter;
 
 /**
@@ -32,6 +34,7 @@ import rit.eyeTracking.SmoothingFilters.Filter;
  * TODO: Document how the class is instantiated and prepared for use
  * TODO: The class should be provided with a Protocol instance that implements
  *       the actual operation because commands seem to differ between RED and REDm.
+ * TODO: Log errors to logger, not to stdout
  * 
  * @author Corey Engelman, Sebastian Lohmeier
  * 
@@ -101,17 +104,18 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String CMD_REMARK_PREFIX				= "ET_REM ";
 	public static final String CMD_SAVE_BUFFER_PREFIX			= "ET_SAV ";
 	
-	public static final String CMD_START_5_PT_CALIBRATION		= "ET_CAL 5\n";
+	public static final String CMD_START_CALIBRATION_PREFIX 	= "ET_CAL ";
 	public static final String CMD_CANCEL_CALIBRATION			= "ET_BRK\n";
 	public static final String CMD_ACCEPT_CALIBRATION_POINT    	= "ET_ACC\n";
 	public static final String CMD_VALIDATE						= "ET_VLS\n";
+	public static final String CMD_EXTENDED_VALIDATION 			= "ET_VLX\n";
+	public static final String CMD_EXTENDED_VALIDATION_PREFIX	= "ET_VLX ";
 	
 	public static final String MSG_START_CALIBRATION			= "ET_CAL";
 	public static final String MSG_CALIBRATION_AREA				= "ET_CSZ";
 	public static final String MSG_CALIBRATION_PT				= "ET_PNT";
 	public static final String MSG_CALIBRATION_PT_CHANGE		= "ET_CHG";
 	public static final String MSG_END_CALIBRATION			    = "ET_FIN";
-	public static final String MSG_VALIDATION					= "ET_VLS";
 	
 	public static final String CMD_TRACKER_PARAMETER_PREFIX 	= "ET_SFT ";
 	public static final String PARAM_LEFT_EYE			        = "0";
@@ -294,6 +298,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	public synchronized boolean isConnected() {
 		return state.isConnected();
 	}
+	
+	@Override
+	public synchronized boolean isTracking() {
+		return state.isTracking();
+	}
 
 	/**
 	 * Toggles eye tracking on and off without disconnecting.
@@ -304,10 +313,38 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	}
 
 	@Override
-	public void calibrate(CalibrationListener listener) throws IOException {
-		state.calibrate(listener);
+	public void calibrate(SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException("Need to specify the number of calibration points");
 	}
-	
+
+	@Override
+	public void calibrate(int numberOfPoints, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		state.calibrate(numberOfPoints, calibration, listener);
+	}
+
+	@Override
+	public void abortCalibration() throws IOException,
+			UnsupportedOperationException {
+		state.abortCalibration();
+	}
+
+	@Override
+	public void validate(Point[] points, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		state.validate(points, calibration, listener);
+	}
+
+	@Override
+	public void abortValidation() throws IOException,
+			UnsupportedOperationException {
+		state.abortValidation();
+	}
+
 	/**
 	 * A means of stopping this thread.
 	 */
@@ -487,7 +524,8 @@ INFO:eyetracking.api.RAW_EVENT parsed
 							}
 							
 							if(!matched) {
-								String[] tokens = responseString.split(" ");
+								String[] tokens = responseString.split(" |\t");
+								System.err.println(responseString+"="+Arrays.asList(tokens));
 								notifyMessageListeners(tokens[0], tokens);
 							}
 
@@ -519,8 +557,14 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public abstract void connect() throws IOException;
 		public abstract void disconnect() throws IOException;
 		public abstract boolean isConnected();
+		public abstract boolean isTracking();
 		public abstract boolean toggle() throws IOException;
-		public abstract void calibrate(CalibrationListener listener) throws IOException;
+		public abstract void calibrate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException;
+		public abstract void abortCalibration() throws IOException;
+		public abstract void validate(Point[] points, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException;
+		public abstract void abortValidation() throws IOException;
 	}
 	
 	private class Disconnected extends State {
@@ -577,6 +621,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public boolean isConnected() {
 			return false;
 		}
+		
+		@Override
+		public boolean isTracking() {
+			return false;
+		}
 
 		@Override
 		public boolean toggle() {
@@ -584,7 +633,25 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(CalibrationListener listener) throws IOException {
+		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			connect();
+			state = new Calibrating(numberOfPoints, calibration, listener);
+		}
+
+		@Override
+		public void abortCalibration() throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void validate(Point[] points, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void abortValidation() throws IOException {
 			throw new IllegalStateException();
 		}
 		
@@ -618,6 +685,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 		
 		@Override
+		public boolean isTracking() {
+			return false;
+		}
+		
+		@Override
 		public void sendBufferMessage(String message) throws IOException {
 			sendCommand(CMD_REMARK_PREFIX+"\""+message+"\"\n");
 		}
@@ -630,35 +702,91 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(CalibrationListener listener) throws IOException {
-			state = new Calibrating(listener);
+		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			state = new Calibrating(numberOfPoints, calibration, listener);
+		}
+
+		@Override
+		public void abortCalibration() throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void validate(Point[] points, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void abortValidation() throws IOException {
+			throw new IllegalStateException();
 		}
 		
 	}
 	
+	private class PointListener implements MessageListener {
+		private final Point[] points;
+		
+		private PointListener(Point[] points) {
+			this.points = points;
+		}
+		
+		@Override
+		public void listen(String[] message) {
+			int index = Integer.parseInt(message[1]);
+			int x = Integer.parseInt(message[2]);
+			int y = Integer.parseInt(message[3]);
+			points[index-1] = new Point(x, y);
+		}
+	}
+	
 	private class Calibrating extends Connected {
 		
+		private final int numberOfPoints;
+		private final Point[] points;
+		private final SWTCalibration calibration;
 		private final CalibrationListener calibrationListener;
+		private MessageListener ptListener;
+		private MessageListener ptcListener;
+		private MessageListener endListener;
 		
-		private Calibrating(CalibrationListener listener) throws IOException {
+		private Calibrating(final int numberOfPoints,
+				final SWTCalibration calibration,
+				final CalibrationListener listener) throws IOException {
+			this.numberOfPoints = numberOfPoints;
+			this.points = new Point[numberOfPoints];
+			this.calibration = calibration;
 			this.calibrationListener = listener;
-			LoggingMessageListener lml = new LoggingMessageListener();
-			addMessageListener(MSG_CALIBRATION_PT_CHANGE, lml);
-			addMessageListener(MSG_VALIDATION, lml);
-			addMessageListener(MSG_END_CALIBRATION, new MessageListener() {
+			ptListener = new PointListener(points);
+			ptcListener = new MessageListener() {
+				@Override
+				public void listen(String[] message) {
+					try {
+						int index = Integer.parseInt(message[1]);
+						protocol.calibrate(IViewXComm.this, Calibrating.this.points[index-1], calibration, listener);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}};
+				
+			endListener = new MessageListener() {
+				private boolean validating = false;
 				@Override
 				public void listen(String[] message) {
 					try {
 						removeMessageListener(MSG_END_CALIBRATION, this);
-						// TODO: Maybe request calibration results using ET_RES
-						sendCommand(CMD_VALIDATE);
 						Calibrating.super.toggle();
+						listener.success();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
-			});
-			sendCommand(CMD_START_5_PT_CALIBRATION);
+			};
+			addMessageListener(MSG_CALIBRATION_PT, ptListener);
+			addMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+			addMessageListener(MSG_END_CALIBRATION, endListener);
+			sendCommand(CMD_START_CALIBRATION_PREFIX+numberOfPoints+"\n");
 		}
 		
 		@Override
@@ -667,7 +795,80 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(CalibrationListener listener) {
+		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void abortCalibration() throws IOException {
+			removeMessageListener(MSG_CALIBRATION_PT, ptListener);
+			removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+			removeMessageListener(MSG_END_CALIBRATION, endListener);
+			sendCommand(CMD_CANCEL_CALIBRATION);
+			protocol.abortCalibration(IViewXComm.this, calibration);
+			calibrationListener.aborted();
+			state = new Connected();
+		}
+		
+	}
+	
+	private class Validating extends Connected {
+		
+		private int numberOfPoints;
+		private Point[] points;
+		private SWTCalibration calibration;
+		private CalibrationListener listener;
+		private PointListener ptListener;
+		private MessageListener ptcListener;
+		private MessageListener endListener;
+		
+		private Validating(final int numberOfPoints, final SWTCalibration calibration,
+				final CalibrationListener listener) throws IOException {
+			this.numberOfPoints = numberOfPoints;
+			this.points = new Point[numberOfPoints];
+			this.calibration = calibration;
+			this.listener = listener;
+			ptListener = new PointListener(points);
+			ptcListener = new MessageListener() {
+				@Override
+				public void listen(String[] message) {
+					try {
+						int index = Integer.parseInt(message[1]);
+						protocol.validate(IViewXComm.this, Validating.this.points[index-1], calibration, listener);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}};
+				
+			endListener = new MessageListener() {
+				private boolean validating = false;
+				@Override
+				public void listen(String[] message) {
+					removeMessageListener(MSG_END_CALIBRATION, this);
+					state = new Tracking();
+					listener.success();
+				}
+			};
+			addMessageListener(MSG_CALIBRATION_PT, ptListener);
+			addMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+			addMessageListener(MSG_END_CALIBRATION, endListener);
+			sendCommand(CMD_VALIDATE);
+		}
+
+		@Override
+		public void abortValidation() throws IOException {
+			removeMessageListener(MSG_CALIBRATION_PT, ptListener);
+			removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+			removeMessageListener(MSG_END_CALIBRATION, endListener);
+			sendCommand(CMD_CANCEL_CALIBRATION); // TODO: Is there a command to abort validation?
+			protocol.abortValidation(IViewXComm.this, calibration);
+			listener.aborted();
+			state = new Tracking();
+		}
+		
+		@Override
+		public boolean toggle() {
 			throw new IllegalStateException();
 		}
 		
@@ -676,14 +877,27 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	private class Tracking extends Connected {
 
 		@Override
+		public boolean isTracking() {
+			return true;
+		}
+		
+		@Override
 		public boolean toggle() throws IOException {
 			state = new Connected();
 			return false;
 		}
 
 		@Override
-		public void calibrate(CalibrationListener listener) {
-			throw new IllegalStateException();
+		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			state = new Calibrating(numberOfPoints, calibration, listener);
+		}
+
+		@Override
+		public void validate(Point[] points, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			// TODO: implement extended calibration with custom points
+			state = new Validating(5, calibration, listener);
 		}
 		
 	}

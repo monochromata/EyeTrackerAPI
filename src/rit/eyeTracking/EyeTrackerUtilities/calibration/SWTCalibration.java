@@ -166,9 +166,12 @@ public class SWTCalibration {
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
-				sentencePresenter.abort();
-				shell.removePaintListener(paintListener);
-				shell.close();
+				if(sentencePresenter != null)
+					sentencePresenter.abort();
+				if(shell != null && paintListener != null)
+					shell.removePaintListener(paintListener);
+				if(shell != null)
+					shell.close();
 				paintListener = null;
 				shell = null;
 			}});
@@ -176,8 +179,8 @@ public class SWTCalibration {
 	
 	private static class GamePaintListener implements PaintListener {
 
-		private static final int ARM_LENGTH = 10;
-		private static final int ARM_WIDTH  =  6;
+		private static final int ARM_LENGTH = 20;
+		private static final int ARM_WIDTH  = 14;
 		
 		private Color feedbackColor;
 		private Color black, red, green;
