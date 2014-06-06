@@ -87,6 +87,11 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	}
 
 	@Override
+	public boolean isTracking() {
+		return connected;
+	}
+
+	@Override
 	public void requestStop() {
 		stop = true;
 	}

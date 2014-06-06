@@ -775,7 +775,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 				@Override
 				public void listen(String[] message) {
 					try {
-						removeMessageListener(MSG_END_CALIBRATION, this);
+						removeMessageListener(MSG_CALIBRATION_PT, ptListener);
+						removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+						removeMessageListener(MSG_END_CALIBRATION, endListener);
 						Calibrating.super.toggle();
 						listener.success();
 					} catch (IOException e) {
@@ -845,7 +847,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 				private boolean validating = false;
 				@Override
 				public void listen(String[] message) {
-					removeMessageListener(MSG_END_CALIBRATION, this);
+					removeMessageListener(MSG_CALIBRATION_PT, ptListener);
+					removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+					removeMessageListener(MSG_END_CALIBRATION, endListener);
 					state = new Tracking();
 					listener.success();
 				}
