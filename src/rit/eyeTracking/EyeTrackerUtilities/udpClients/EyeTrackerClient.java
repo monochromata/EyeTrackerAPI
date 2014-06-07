@@ -143,6 +143,30 @@ public abstract class EyeTrackerClient extends Thread {
 	public abstract void abortCalibration()
 			throws IOException, UnsupportedOperationException;
 	
+	/**
+	 * Perform standard validation using the points used for calibration.
+	 * 
+	 * @param numberOfPoints
+	 * @param calibration
+	 * @param listener
+	 * @throws IOException
+	 * @throws UnsupportedOperationException
+	 */
+	public abstract void validate(int numberOfPoints, SWTCalibration calibration,
+					CalibrationListener listener)
+			throws IOException, UnsupportedOperationException;
+	
+	/**
+	 * Perform extended validation using the given points which should lie
+	 * between the standard calibration points in regions typically looked
+	 * at by subjects.
+	 * 
+	 * @param points
+	 * @param calibration
+	 * @param listener
+	 * @throws IOException
+	 * @throws UnsupportedOperationException
+	 */
 	public abstract void validate(Point[] points, SWTCalibration calibration,
 					CalibrationListener listener)
 			throws IOException, UnsupportedOperationException;

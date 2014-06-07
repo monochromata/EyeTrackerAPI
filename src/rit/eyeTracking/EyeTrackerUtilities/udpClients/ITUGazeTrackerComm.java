@@ -134,6 +134,13 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	}
 
 	@Override
+	public void validate(int numberOfPoints, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void validate(Point[] points, SWTCalibration calibration,
 			CalibrationListener listener) throws IOException,
 			UnsupportedOperationException {

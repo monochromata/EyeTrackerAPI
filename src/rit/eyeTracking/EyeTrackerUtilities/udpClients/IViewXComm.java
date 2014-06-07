@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -116,6 +117,7 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String MSG_CALIBRATION_PT				= "ET_PNT";
 	public static final String MSG_CALIBRATION_PT_CHANGE		= "ET_CHG";
 	public static final String MSG_END_CALIBRATION			    = "ET_FIN";
+	public static final String MSG_EXTENDED_CALIBRATION			= "ET_VLX";
 	
 	public static final String CMD_TRACKER_PARAMETER_PREFIX 	= "ET_SFT ";
 	public static final String PARAM_LEFT_EYE			        = "0";
@@ -330,6 +332,13 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	public void abortCalibration() throws IOException,
 			UnsupportedOperationException {
 		state.abortCalibration();
+	}
+
+	@Override
+	public void validate(int numberOfPoints, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		state.validate(numberOfPoints, calibration, listener);
 	}
 
 	@Override
@@ -562,6 +571,8 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public abstract void calibrate(int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException;
 		public abstract void abortCalibration() throws IOException;
+		public abstract void validate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException;
 		public abstract void validate(Point[] points, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException;
 		public abstract void abortValidation() throws IOException;
@@ -645,6 +656,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
+		public void validate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
 		public void validate(Point[] points, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
 			throw new IllegalStateException();
@@ -713,6 +730,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
+		public void validate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			throw new IllegalStateException();
+		}
+
+		@Override
 		public void validate(Point[] points, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
 			throw new IllegalStateException();
@@ -771,7 +794,6 @@ INFO:eyetracking.api.RAW_EVENT parsed
 				}};
 				
 			endListener = new MessageListener() {
-				private boolean validating = false;
 				@Override
 				public void listen(String[] message) {
 					try {
@@ -844,7 +866,6 @@ INFO:eyetracking.api.RAW_EVENT parsed
 				}};
 				
 			endListener = new MessageListener() {
-				private boolean validating = false;
 				@Override
 				public void listen(String[] message) {
 					removeMessageListener(MSG_CALIBRATION_PT, ptListener);
@@ -878,6 +899,69 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		
 	}
 	
+	private class ValidatingExtended extends Connected {
+		
+		private List<Point> points;
+		private int currentPoint = 0;
+		private SWTCalibration calibration;
+		private CalibrationListener listener;
+		private MessageListener pointsListener;
+		
+		private ValidatingExtended(Point[] points, final SWTCalibration calibration,
+				final CalibrationListener listener) throws IOException {
+			this.points = Arrays.asList(points);
+			this.calibration = calibration;
+			this.listener = listener;
+			if(points.length == 0)
+				throw new IllegalArgumentException("No points provided for extended calibration");
+			pointsListener = new MessageListener() {
+				@Override
+				public void listen(String[] message) {
+					try {
+						if(message.length == 1) {
+							// There was an error with the last point, append it to the end of
+							// the list
+							ValidatingExtended.this.points.add(ValidatingExtended.this.points.get(currentPoint));
+						}
+						if(++currentPoint < ValidatingExtended.this.points.size()) {
+							// Show the next point if there is one left
+							validateCurrentPoint();
+						} else {
+							// Finish
+							removeMessageListener(MSG_EXTENDED_CALIBRATION, pointsListener);
+							state = new Tracking();
+							listener.success();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}};
+			addMessageListener(MSG_EXTENDED_CALIBRATION, pointsListener);
+			validateCurrentPoint();
+		}
+
+		protected void validateCurrentPoint() throws IOException {
+			Point point = this.points.get(currentPoint);
+			protocol.validate(IViewXComm.this, point, calibration, listener);
+			sendCommand(CMD_EXTENDED_VALIDATION_PREFIX+point.x+" "+point.y+"\n");
+		}
+
+		@Override
+		public void abortValidation() throws IOException {
+			removeMessageListener(MSG_EXTENDED_CALIBRATION, pointsListener);
+			sendCommand(CMD_CANCEL_CALIBRATION); // TODO: Is there a command to abort validation?
+			protocol.abortValidation(IViewXComm.this, calibration);
+			listener.aborted();
+			state = new Tracking();
+		}
+		
+		@Override
+		public boolean toggle() {
+			throw new IllegalStateException();
+		}
+		
+	}
+	
 	private class Tracking extends Connected {
 
 		@Override
@@ -898,10 +982,15 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
+		public void validate(int numberOfPoints, SWTCalibration calibration,
+				CalibrationListener listener) throws IOException {
+			state = new Validating(5, calibration, listener);
+		}
+
+		@Override
 		public void validate(Point[] points, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
-			// TODO: implement extended calibration with custom points
-			state = new Validating(5, calibration, listener);
+			state = new ValidatingExtended(points, calibration, listener);
 		}
 		
 	}
