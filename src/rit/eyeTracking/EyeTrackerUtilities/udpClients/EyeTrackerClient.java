@@ -18,6 +18,11 @@ import rit.eyeTracking.SmoothingFilters.Filter;
  * 
  */
 public abstract class EyeTrackerClient extends Thread {
+	
+	public enum Eye {
+		LEFT, RIGHT, BOTH
+	}
+	
 	/**
 	 * Represents the current sample point from the eye tracker.
 	 */
@@ -133,10 +138,10 @@ public abstract class EyeTrackerClient extends Thread {
 	 * @throws IOException In an error occurs while calibration is started
 	 * @throws UnsupportedOperationException If the client does not support calibration.
 	 */
-	public abstract void calibrate(SWTCalibration calibration, CalibrationListener listener)
+	public abstract void calibrate(Eye eye, SWTCalibration calibration, CalibrationListener listener)
 			throws IOException, UnsupportedOperationException;
 	
-	public abstract void calibrate(int numberOfPoints, SWTCalibration calibration,
+	public abstract void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 					CalibrationListener listener)
 			throws IOException, UnsupportedOperationException;
 	

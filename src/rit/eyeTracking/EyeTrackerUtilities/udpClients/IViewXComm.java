@@ -315,17 +315,17 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	}
 
 	@Override
-	public void calibrate(SWTCalibration calibration,
+	public void calibrate(Eye eye, SWTCalibration calibration,
 			CalibrationListener listener) throws IOException,
 			UnsupportedOperationException {
 		throw new UnsupportedOperationException("Need to specify the number of calibration points");
 	}
 
 	@Override
-	public void calibrate(int numberOfPoints, SWTCalibration calibration,
+	public void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 			CalibrationListener listener) throws IOException,
 			UnsupportedOperationException {
-		state.calibrate(numberOfPoints, calibration, listener);
+		state.calibrate(eye, numberOfPoints, calibration, listener);
 	}
 
 	@Override
@@ -568,7 +568,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public abstract boolean isConnected();
 		public abstract boolean isTracking();
 		public abstract boolean toggle() throws IOException;
-		public abstract void calibrate(int numberOfPoints, SWTCalibration calibration,
+		public abstract void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException;
 		public abstract void abortCalibration() throws IOException;
 		public abstract void validate(int numberOfPoints, SWTCalibration calibration,
@@ -644,10 +644,10 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+		public void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
 			connect();
-			state = new Calibrating(numberOfPoints, calibration, listener);
+			state = new Calibrating(eye, numberOfPoints, calibration, listener);
 		}
 
 		@Override
@@ -719,9 +719,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+		public void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
-			state = new Calibrating(numberOfPoints, calibration, listener);
+			state = new Calibrating(eye, numberOfPoints, calibration, listener);
 		}
 
 		@Override
@@ -766,6 +766,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	
 	private class Calibrating extends Connected {
 		
+		private final Eye eye;
 		private final int numberOfPoints;
 		private final Point[] points;
 		private final SWTCalibration calibration;
@@ -774,9 +775,10 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		private MessageListener ptcListener;
 		private MessageListener endListener;
 		
-		private Calibrating(final int numberOfPoints,
+		private Calibrating(Eye eye, final int numberOfPoints,
 				final SWTCalibration calibration,
 				final CalibrationListener listener) throws IOException {
+			this.eye = eye;
 			this.numberOfPoints = numberOfPoints;
 			this.points = new Point[numberOfPoints];
 			this.calibration = calibration;
@@ -810,7 +812,24 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			addMessageListener(MSG_CALIBRATION_PT, ptListener);
 			addMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
 			addMessageListener(MSG_END_CALIBRATION, endListener);
-			sendCommand(CMD_START_CALIBRATION_PREFIX+numberOfPoints+"\n");
+			startCalibration(eye, numberOfPoints);
+		}
+
+		protected void startCalibration(Eye eye, final int numberOfPoints)
+				throws IOException {
+			switch(eye) {
+			case BOTH:
+				sendCommand(CMD_START_CALIBRATION_PREFIX+numberOfPoints+"\n");
+				break;
+			case RIGHT:
+				sendCommand(CMD_START_CALIBRATION_PREFIX+numberOfPoints+" 1\n");
+				break;
+			case LEFT:
+				sendCommand(CMD_START_CALIBRATION_PREFIX+numberOfPoints+" 2\n");
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid eye constant: "+eye);
+			}
 		}
 		
 		@Override
@@ -819,7 +838,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+		public void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
 			throw new IllegalStateException();
 		}
@@ -976,9 +995,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		}
 
 		@Override
-		public void calibrate(int numberOfPoints, SWTCalibration calibration,
+		public void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
-			state = new Calibrating(numberOfPoints, calibration, listener);
+			state = new Calibrating(eye, numberOfPoints, calibration, listener);
 		}
 
 		@Override
