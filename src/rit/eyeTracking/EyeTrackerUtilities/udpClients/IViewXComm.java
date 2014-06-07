@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.graphics.Point;
+import org.omg.CORBA.RepositoryIdHelper;
 
 import rit.eyeTracking.Event;
 import rit.eyeTracking.EventImpl;
@@ -113,6 +114,7 @@ public class IViewXComm extends EyeTrackerClient {
 	public static final String CMD_EXTENDED_VALIDATION_PREFIX	= "ET_VLX ";
 	
 	public static final String MSG_START_CALIBRATION			= "ET_CAL";
+	public static final String MSG_ABORT_CALIBRATION			= "ET_BRK";
 	public static final String MSG_CALIBRATION_AREA				= "ET_CSZ";
 	public static final String MSG_CALIBRATION_PT				= "ET_PNT";
 	public static final String MSG_CALIBRATION_PT_CHANGE		= "ET_CHG";
@@ -149,11 +151,21 @@ public class IViewXComm extends EyeTrackerClient {
 	
 	public static final String RESPONSE_DATA_STRING 			= "ET_SPL";
 	
+	protected static final Pattern RESPONSE_PATTERN_PNT =
+		Pattern.compile("\\AET_PNT\\s+(?<I>\\d)\\s+(?<X>\\d+)\\s+(?<Y>\\d+)\\z");	
+	
+	protected static final Pattern RESPONSE_PATTERN_VLS =
+		Pattern.compile("\\AET_VLS\\s+(?<ET>left|right)\\s+(?<RMSX>[0-9\\-\\.]+)\\s+(?<RMSY>[0-9\\-\\.]+)"
+				+"\\s+(?<RMSD>[0-9\\-\\.]+)\\s+(?<XD>[0-9\\-\\.]+)°\\s+(?<YD>[0-9\\-\\.]+)°\\z");
+	protected static final Pattern RESPONSE_PATTERN_VLX =
+		Pattern.compile("\\AET_VLX\\s+(?<RMSXL>[0-9\\-\\.]+)\\s+(?<RMSYL>[0-9\\-\\.]+)\\s+(?<XDL>[0-9\\-\\.]+)°\\s+(?<YDL>[0-9\\-\\.]+)°"
+				+"\\s+(?<RMSXR>[0-9\\-\\.]+)\\s+(?<RMSYR>[0-9\\-\\.]+)\\s+(?<XDR>[0-9\\-\\.]+)°\\s+(?<YDR>[0-9\\-\\.]+)°\\z");
+	
 	protected static final Pattern RESPONSE_PATTERN_FIXATION_START =
 		Pattern.compile("\\AET_FIX\\s+(?<ET>l|r|b)\\s+(?<TU>\\d+)\\s+(?<SX>[0-9\\-\\.]+)\\s+(?<SY>[0-9\\-\\.]+)\\z");
 	protected static final Pattern RESPONSE_PATTERN_FIXATION_END =
 		Pattern.compile("\\AET_EFX\\s+(?<ET>l|r|b)\\s+(?<TUS>\\d+)\\s+(?<TUE>\\d+)\\s+(?<DU>\\d+)\\s+(?<SX>[0-9\\-\\.]+)\\s+(?<SY>[0-9\\-\\.]+)\\z");
-
+	
 	private final IViewXProtocol protocol;
 	
 	/*
@@ -532,11 +544,124 @@ INFO:eyetracking.api.RAW_EVENT parsed
 								}
 							}
 							
-							if(!matched) {
-								String[] tokens = responseString.split(" |\t");
-								System.err.println(responseString+"="+Arrays.asList(tokens));
-								notifyMessageListeners(tokens[0], tokens);
+							if(!matched && responseString.startsWith(MSG_START_CALIBRATION)) {
+								String[] parts = responseString.split(" ");
+								Map<String,Object> map = new HashMap<String,Object>();
+								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+								if(parts.length == 2) {
+									switch(Integer.parseInt(parts[1])) {
+									case 1:
+										map.put(Event.EYE_TYPE, "r");
+										break;
+									case 2:
+										map.put(Event.EYE_TYPE, "l");
+										break;
+									default:
+										info("Unknown eye type in "+responseString+"\n");
+									}
+								}
+								Event e = new EventImpl(IViewX.CALIBRATION_STARTED, map);
+								filter.filter(e);
+								matched = true;
+								info(IViewX.CALIBRATION_STARTED+" parsed\n");
 							}
+							
+							if(!matched) {
+								Matcher pntMatcher = RESPONSE_PATTERN_PNT.matcher(responseString);
+								if(pntMatcher.matches()) {
+									Map<String,Object> map = new HashMap<String,Object>();
+									map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+									map.put(IViewX.PNT_INDEX, pntMatcher.group("I"));
+									map.put(IViewX.PNT_X, Integer.parseInt(pntMatcher.group("X")));
+									map.put(IViewX.PNT_Y, Integer.parseInt(pntMatcher.group("Y")));
+									Event e = new EventImpl(IViewX.CALIBRATION_POINT_DATA, map);
+									filter.filter(e);
+									matched = true;
+									info(IViewX.CALIBRATION_POINT_DATA+" parsed\n");
+								}
+							}
+							
+							if(!matched && responseString.startsWith(MSG_CALIBRATION_PT_CHANGE)) {
+								String[] parts = responseString.split(" ");
+								Map<String,Object> map = new HashMap<String,Object>();
+								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+								map.put(IViewX.PNT_INDEX, Integer.parseInt(parts[1]));
+								Event e = new EventImpl(IViewX.CALIBRATION_POINT_CHANGE, map);
+								filter.filter(e);
+								matched = true;
+								info(IViewX.CALIBRATION_POINT_CHANGE+" parsed\n");
+							}
+							
+							if(!matched && responseString.startsWith(MSG_ABORT_CALIBRATION)) {
+								Map<String,Object> map = new HashMap<String,Object>();
+								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+								Event e = new EventImpl(IViewX.CALIBRATION_ABORTED, map);
+								filter.filter(e);
+								matched = true;
+								info(IViewX.CALIBRATION_ABORTED+" parsed\n");
+							}
+							
+							if(!matched && responseString.startsWith(MSG_END_CALIBRATION)) {
+								Map<String,Object> map = new HashMap<String,Object>();
+								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+								Event e = new EventImpl(IViewX.CALIBRATION_SUCCESSFUL, map);
+								filter.filter(e);
+								matched = true;
+								info(IViewX.CALIBRATION_SUCCESSFUL+" parsed\n");
+							}
+
+							if(!matched) {
+								Matcher vlsMatcher = RESPONSE_PATTERN_VLS.matcher(responseString);
+								if(vlsMatcher.matches()) {
+									Map<String,Object> map = new HashMap<String,Object>();
+									map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+									switch(vlsMatcher.group("ET")) {
+									case "left":
+										map.put(Event.EYE_TYPE, "l");
+										break;
+									case "right":
+										map.put(Event.EYE_TYPE, "r");
+										break;
+									default:
+										info("Unknown eye type="+vlsMatcher.group("ET")+" in "+responseString);
+									}
+									map.put(IViewX.RMSX, Float.parseFloat(vlsMatcher.group("RMSX")));
+									map.put(IViewX.RMSY, Float.parseFloat(vlsMatcher.group("RMSY")));
+									map.put(IViewX.RMSD, Float.parseFloat(vlsMatcher.group("RMSD")));
+									map.put(IViewX.XD, Float.parseFloat(vlsMatcher.group("XD")));
+									map.put(IViewX.YD, Float.parseFloat(vlsMatcher.group("YD")));
+									Event e = new EventImpl(IViewX.CALIBRATION_ACCURRACY, map);
+									filter.filter(e);
+									matched = true;
+									info(IViewX.CALIBRATION_ACCURRACY+" parsed\n");
+								}
+							}
+							
+							if(!matched) {
+								Matcher vlxMatcher = RESPONSE_PATTERN_VLX.matcher(responseString);
+								if(vlxMatcher.matches()) {
+									Map<String,Object> map = new HashMap<String,Object>();
+									map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
+									map.put(IViewX.RMSXL, Float.parseFloat(vlxMatcher.group("RMSXL")));
+									map.put(IViewX.RMSYL, Float.parseFloat(vlxMatcher.group("RMSYL")));
+									map.put(IViewX.XDL, Float.parseFloat(vlxMatcher.group("XDL")));
+									map.put(IViewX.YDL, Float.parseFloat(vlxMatcher.group("YDL")));
+									map.put(IViewX.RMSXR, Float.parseFloat(vlxMatcher.group("RMSXR")));
+									map.put(IViewX.RMSYR, Float.parseFloat(vlxMatcher.group("RMSYR")));
+									map.put(IViewX.XDR, Float.parseFloat(vlxMatcher.group("XDR")));
+									map.put(IViewX.YDR, Float.parseFloat(vlxMatcher.group("YDR")));
+									Event e = new EventImpl(IViewX.VALIDATION_ACCURRACY, map);
+									filter.filter(e);
+									matched = true;
+									info(IViewX.VALIDATION_ACCURRACY+" parsed\n");
+								}
+							}
+							
+							//if(!matched) {
+							String[] tokens = responseString.split(" |\t");
+							System.err.println(responseString+"="+Arrays.asList(tokens));
+							notifyMessageListeners(tokens[0], tokens);
+							//}
 
 						} catch (SocketException se) {
 							error(se);
