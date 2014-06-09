@@ -6,7 +6,7 @@ public interface CalibrationListener {
 	 * To be invoked by the implementation of {@link IViewXProtocol#calibrate(IViewXComm, boolean)}
 	 * when calibration and validation have been completed successfully.
 	 */
-	public void success();
+	public void success(String results);
 	
 	/**
 	 * To be invoked by implementations of {@link IViewXProtocol#calibrate(IViewXComm, boolean)}
