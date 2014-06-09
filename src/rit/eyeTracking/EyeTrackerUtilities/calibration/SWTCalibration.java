@@ -179,7 +179,7 @@ public class SWTCalibration {
 	
 	private static class GamePaintListener implements PaintListener {
 
-		private static final int ARM_LENGTH = 20;
+		private static final int ARM_LENGTH = 14;
 		private static final int ARM_WIDTH  = 12;
 		
 		private Color feedbackColor;
@@ -211,18 +211,18 @@ public class SWTCalibration {
 			 *     7---6
 			 */
 			cross = new int[] {
-				x-(ARM_WIDTH/2), y-ARM_LENGTH, 	  // 0
-				x+(ARM_WIDTH/2), y-ARM_LENGTH, 	  // 1
-				x+(ARM_WIDTH/2), y-(ARM_WIDTH/2), // 2
-				x+ARM_LENGTH,    y-(ARM_WIDTH/2), // 3
-				x+ARM_LENGTH, 	 y+(ARM_WIDTH/2), // 4
-				x+(ARM_WIDTH/2), y+(ARM_WIDTH/2), // 5
-				x+(ARM_WIDTH/2), y+ARM_LENGTH,	  // 6
-				x-(ARM_WIDTH/2), y+ARM_LENGTH,    // 7
-				x-(ARM_WIDTH/2), y+(ARM_WIDTH/2), // 8
-				x-ARM_LENGTH,    y+(ARM_WIDTH/2), // 9
-				x-ARM_LENGTH,    y-(ARM_WIDTH/2), // 10
-				x-(ARM_WIDTH/2), y-(ARM_WIDTH/2)  // 11
+				/*  0 */ x-(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
+				/*  1 */ x+(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
+				/*  2 */ x+(ARM_WIDTH/2), 				y-(ARM_WIDTH/2),
+				/*  3 */ x+(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
+				/*  4 */ x+(ARM_LENGTH+(ARM_WIDTH/2)), 	y+(ARM_WIDTH/2),
+				/*  5 */ x+(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
+				/*  6 */ x+(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
+				/*  7 */ x-(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
+				/*  8 */ x-(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
+				/*  9 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y+(ARM_WIDTH/2),
+				/* 10 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
+				/* 11 */ x-(ARM_WIDTH/2),				y-(ARM_WIDTH/2)
 			};
 		}
 		
