@@ -992,7 +992,6 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		private PointListener ptListener;
 		private MessageListener ptcListener;
 		private MessageListener vlsListener;
-		private MessageListener endListener;
 		
 		private Validating(final int numberOfPoints, final SWTCalibration calibration,
 				final CalibrationListener listener) throws IOException {
@@ -1012,27 +1011,25 @@ INFO:eyetracking.api.RAW_EVENT parsed
 					}
 				}};
 			vlsListener = new MessageListener() {
+				private int vlsCount = 0;
 				@Override
 				public void listen(String[] message) {
-					vlsInfo += Arrays.asList(message).toString();
+					vlsInfo += Arrays.asList(message).toString()+"\n";
+					vlsCount++;
+					if(vlsCount == 2) {
+						// End listening
+						removeMessageListener(MSG_CALIBRATION_PT, ptListener);
+						removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
+						removeMessageListener(MSG_VALIDATION, vlsListener);
+						state = new Tracking();
+						listener.success(vlsInfo);
+					}
 				}
 			};
 				
-			endListener = new MessageListener() {
-				@Override
-				public void listen(String[] message) {
-					removeMessageListener(MSG_CALIBRATION_PT, ptListener);
-					removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
-					removeMessageListener(MSG_VALIDATION, vlsListener);
-					removeMessageListener(MSG_END_CALIBRATION, endListener);
-					state = new Tracking();
-					listener.success(vlsInfo);
-				}
-			};
 			addMessageListener(MSG_CALIBRATION_PT, ptListener);
 			addMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
 			addMessageListener(MSG_VALIDATION, vlsListener);
-			addMessageListener(MSG_END_CALIBRATION, endListener);
 			sendCommand(CMD_VALIDATE);
 		}
 
@@ -1041,7 +1038,6 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			removeMessageListener(MSG_CALIBRATION_PT, ptListener);
 			removeMessageListener(MSG_CALIBRATION_PT_CHANGE, ptcListener);
 			removeMessageListener(MSG_VALIDATION, vlsListener);
-			removeMessageListener(MSG_END_CALIBRATION, endListener);
 			sendCommand(CMD_CANCEL_CALIBRATION); // TODO: Is there a command to abort validation?
 			protocol.abortValidation(IViewXComm.this, calibration);
 			listener.aborted();
@@ -1082,10 +1078,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 						}
 						if(++currentPoint < ValidatingExtended.this.points.size()) {
 							// Log validation result
-							vlxInfo += Arrays.asList(message).toString();
+							vlxInfo += Arrays.asList(message).toString()+"\n";
 							// Show the next point if there is one left
 							validateCurrentPoint();
 						} else {
+							// Log validation result
+							vlxInfo += Arrays.asList(message).toString()+"\n";
 							// Finish
 							removeMessageListener(MSG_EXTENDED_VALIDATION, pointsListener);
 							state = new Tracking();
