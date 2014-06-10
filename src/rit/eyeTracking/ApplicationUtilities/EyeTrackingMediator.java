@@ -171,12 +171,16 @@ public abstract class EyeTrackingMediator {
 					 */
 
 					synchronized (filter) {
-						Event e = filter.getNewEvent();
-						if(e != null) {
-							fire(e, mode);
+						try {
+							Event e = filter.getNewEvent();
+							if(e != null) {
+								fire(e, mode);
+							}
+							filter.notifyEventRead();
+							filter.waitForNewEvent();
+						} catch(Throwable t) {
+							t.printStackTrace();
 						}
-						filter.notifyEventRead();
-						filter.waitForNewEvent();
 					}
 					// filter.waitForNewCoordinate();
 
