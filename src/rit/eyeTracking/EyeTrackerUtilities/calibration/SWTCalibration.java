@@ -180,7 +180,7 @@ public class SWTCalibration {
 	private static class GamePaintListener implements PaintListener {
 
 		private static final int ARM_LENGTH = 14;
-		private static final int ARM_WIDTH  = 12;
+		private static final int ARM_WIDTH  = 8;
 		
 		private Color feedbackColor;
 		private Color black, red, green;
