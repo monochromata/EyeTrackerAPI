@@ -332,27 +332,30 @@ public class SWTCalibration {
 		
 		@Override
 		public synchronized void run() {
+			String sentence = null;
 			while(run) {
 				try {
-					wait();
-					if(run && sentence != null) {
+					if(sentence == null || sentence == this.sentence)
+						wait();
+					sentence = this.sentence;
+					if(run && sentence != null && sentence == this.sentence) {
 						Point point = this.location;
 						calibration.showString("XXX", point, fontColor);
-						wait(1000L);
+						wait(100L); // wait(1000L);
 						String[] words = sentence.split(" ");
-						for(int i=0;run && i<words.length-1;i++) {
+						for(int i=0;run && sentence == this.sentence && i<words.length-1;i++) {
 							calibration.showString(words[i], point, fontColor);
 							wait(200L);
 						}
-						if(run) {
+						if(run && sentence == this.sentence) {
 							calibration.showString(words[words.length-1], point, fontColor);
 							synchronized(client) {
 								client.notify();
 							}
-							wait(300L);
-							if(run) {
+							if(run && sentence == this.sentence)
+								wait(300L);
+							if(run && sentence == this.sentence)
 								calibration.showString("XXX", point, fontColor);
-							}
 						}
 					}
 				} catch (InterruptedException e) { }
