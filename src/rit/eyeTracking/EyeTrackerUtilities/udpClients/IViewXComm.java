@@ -996,6 +996,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		private Validating(final int numberOfPoints, final SWTCalibration calibration,
 				final CalibrationListener listener) throws IOException {
 			this.numberOfPoints = numberOfPoints;
+			System.err.println("IViewXComm.Validating.numberOfPoints="+numberOfPoints);
 			this.points = new Point[numberOfPoints];
 			this.calibration = calibration;
 			this.listener = listener;
@@ -1141,7 +1142,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		@Override
 		public void validate(int numberOfPoints, SWTCalibration calibration,
 				CalibrationListener listener) throws IOException {
-			state = new Validating(5, calibration, listener);
+			state = new Validating(numberOfPoints, calibration, listener);
 		}
 
 		@Override
