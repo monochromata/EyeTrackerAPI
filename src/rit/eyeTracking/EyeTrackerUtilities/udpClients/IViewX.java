@@ -1,6 +1,7 @@
 package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import rit.eyeTracking.Event;
+import rit.eyeTracking.Event.IDImpl;
 
 /**
  * iViewX-related event constants
@@ -16,6 +17,8 @@ public class IViewX {
 
 	public static final Event.ID CALIBRATION_ACCURRACY = new Event.IDImpl("ET_VLS");
 	public static final Event.ID VALIDATION_ACCURRACY = new Event.IDImpl("ET_VLX");
+	
+	public static final Event.ID USER_EVENT = new Event.IDImpl("UserEvent");
 	
 	public static final String PNT_INDEX = "PNT_INDEX";
 	public static final String PNT_X = "PNT_X";
@@ -36,4 +39,20 @@ public class IViewX {
 	public static final String XDR = "XDR";
 	public static final String YDR = "YDR";
 	
+	public static final String TRIAL = "Trial";
+	public static final String NUMBER = "Number";
+	public static final String DESCRIPTION = "Description";
+	
+	public static final String DISPERSION_X = "Dispersion X";
+	public static final String DISPERSION_Y = "Dispersion Y";
+	public static final String AVG_PUPIL_SIZE_X = "Avg. Pupil Size X";
+	public static final String AVG_PUPIL_SIZE_Y = "Avg Pupil Size Y";
+	
+	public static final String SACC_AMPLITUDE = "Amplitude";
+	public static final String SACC_PEAK_SPEED = "Peak Speed";
+	public static final String SACC_PEAK_SPEED_AT = "Peak Speed At";
+	public static final String SACC_AVG_SPEED = "Average Speed";
+	public static final String SACC_PEAK_ACCEL = "Peak Accel.";
+	public static final String SACC_PEAK_DECEL = "Peak Decel.";
+	public static final String SACC_AVG_ACCEL = "Average Accel.";
 }

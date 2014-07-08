@@ -58,6 +58,9 @@ public interface Event {
 	 */
 	public static final ID FIXATION_END = new IDImpl("FE");
 	
+	public static final ID SACCADE_START = new IDImpl("SaccS");
+	public static final ID SACCADE_END = new IDImpl("SaccE");
+	
 	/**
 	 * A blink event to be detected when a single data sample or a short
 	 * sequence of data samples does not contain eye coordinates.
@@ -95,6 +98,11 @@ public interface Event {
 	 * Tracker timestamp {@link Long} in microseconds.
 	 */
 	public static final String TRACKER_TIMESTAMP_MU = "eyetracking.api.TRACKER_TIMESTAMP_MU";
+	
+	/**
+	 * long
+	 */
+	public static final String DURATION_MU = "DUR_MU";
 	
 	/**
 	 * long
