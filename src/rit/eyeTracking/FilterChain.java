@@ -3,6 +3,7 @@ package rit.eyeTracking;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Maintains the connections between sources, filters and drains.
@@ -13,7 +14,7 @@ public class FilterChain<T> implements EyeTrackingListener {
 	private final List<Filter<T>> runtimeFilters = new ArrayList<Filter<T>>();
 	
 	public FilterChain(Filter<T>[] filters) {
-		this.filters = new ArrayList<Filter<T>>(Arrays.asList(filters));
+		this.filters = new CopyOnWriteArrayList<Filter<T>>(Arrays.asList(filters));
 	}
 	
 	/**
