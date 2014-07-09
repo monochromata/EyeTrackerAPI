@@ -1,14 +1,49 @@
 package rit.eyeTracking;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Maintains the connections between sources, filters and drains.
  */
 public class FilterChain<T> implements EyeTrackingListener {
 	
-	private final Filter<T>[] filters;
+	private final List<Filter<T>> filters;
+	private final List<Filter<T>> runtimeFilters = new ArrayList<Filter<T>>();
 	
 	public FilterChain(Filter<T>[] filters) {
-		this.filters = filters;
+		this.filters = new ArrayList<Filter<T>>(Arrays.asList(filters));
+	}
+	
+	/**
+	 * Add a filter at runtime, e.g. to enable plugins to transparently access
+	 * information provided in the event stream without requiring the user to
+	 * edit the filter chain configuration file.
+	 * 
+	 * @param filter
+	 */
+	public void add(Filter<T> filter) {
+		filters.add(filter);
+		runtimeFilters.add(filter);
+	}
+	
+	/**
+	 * Removes a filter at runtime. Only filters added via {@link #add(Filter)}
+	 * may be removed using this method.
+	 * 
+	 * @param filter
+	 * @throws IllegalArgumentException On attempts to remove filters not
+	 * 		added via {@link #add(Filter<T>)}
+	 * @see #add(Filter)
+	 */
+	public void remove(Filter<T> filter) {
+		if(runtimeFilters.contains(filter)) {
+			filters.remove(filter);
+			runtimeFilters.remove(filter);
+		} else {
+			throw new IllegalArgumentException("Cannot remove filter not added at runtime");
+		}
 	}
 	
 	public void start(T obj, EyeTrackingListener listener, Mode mode) {
