@@ -64,8 +64,13 @@ public interface Event {
 	/**
 	 * A blink event to be detected when a single data sample or a short
 	 * sequence of data samples does not contain eye coordinates.
+	 * 
+	 * @deprecated Use BLINK_START and BLINK_END instead
 	 */
 	public static final ID BLINK = new IDImpl("BL");
+	
+	public static final ID BLINK_START = new IDImpl("BS");
+	public static final ID BLINK_END = new IDImpl("BE");
 	
 	// TODO: It may be desirable to provide microsecond-timestamps in the future
 	
