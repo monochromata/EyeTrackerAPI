@@ -1,5 +1,6 @@
 package rit.eyeTracking;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -364,6 +365,12 @@ public interface Event {
 	public Map<String, Object> getAttributes();
 	
 	/**
+	 * Returns a copy of the event with all attributes removed that
+	 * are not serializable.
+	 */
+	public Event getSerializable();
+	
+	/**
 	 * Release all resources associated with the event.
 	 */
 	public void clear();
@@ -373,7 +380,7 @@ public interface Event {
 	 * 
 	 * @author monochromata
 	 */
-	public interface ID {
+	public interface ID extends Serializable {
 		
 		/**
 		 * Returns a short human-readable string representing the event ID in
