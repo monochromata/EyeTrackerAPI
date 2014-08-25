@@ -30,6 +30,18 @@ public interface EyeTrackingListener {
 				return super.toString();
 			}
 		}
+		
+		public String getActionString() {
+			switch(this) {
+			case RECORDING_MODE: return "Record";
+			case CALIBRATION_MODE: return "Calibrate";
+			case VALIDATION_MODE: return "Validate";
+			case TRACKING_MODE: return "Track eyes";
+			case REPLAY_MODE: return "Replay";
+			case BATCH_MODE: return "Batch replay";
+			default: return toString();
+			}
+		}
 	};
 	
 	/**
