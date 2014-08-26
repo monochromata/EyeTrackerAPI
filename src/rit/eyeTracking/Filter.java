@@ -4,7 +4,8 @@ package rit.eyeTracking;
  * TODO: Maybe remove the constrains on attributes / replace them by
  * constraints on event types.
  * 
- * @param <T>
+ * @param <T> The type of configuration object provided when starting
+ * 	/ stopping the filter.
  */
 public interface Filter<T> extends EyeTrackingListener {
 	public void start(T obj, EyeTrackingListener listener, Mode mode);
