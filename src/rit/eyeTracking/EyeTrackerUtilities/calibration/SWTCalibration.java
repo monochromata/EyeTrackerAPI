@@ -103,6 +103,15 @@ public class SWTCalibration {
 			}});
 	}
 	
+	public void showPoints(final Point[] points) {
+		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+
+			@Override public void run() {
+				paintListener.newCrosses(points);
+				getShell().redraw();
+			}});
+	}
+	
 	public void showString(String string, Point p) {
 		showString(string, p, null);
 	}
@@ -184,7 +193,7 @@ public class SWTCalibration {
 		
 		private Color feedbackColor;
 		private Color black, red, green;
-		private int[] cross;
+		private int[][] crosses;
 		private String string;
 		private Point stringExtent;
 		private int stringCenterX, stringCenterY;
@@ -200,8 +209,19 @@ public class SWTCalibration {
 				}});
 		}
 		
-		public void newCross(int x, int y) {
+		public void newCrosses(Point[] points) {
+			crosses = new int[points.length][12];
+			for(int i=0;i<points.length;i++) {
+				setCross(i, points[i].x, points[i].y);
+			}
+		}
 		
+		public void newCross(int x, int y) {
+			crosses = new int[1][12];
+			setCross(0, x, y);
+		}
+		
+		protected void setCross(int index, int x, int y) {
 			/*     0---1
 			 *     |   |
 			 *  10-11  2--3
@@ -210,24 +230,24 @@ public class SWTCalibration {
 			 *     |   |
 			 *     7---6
 			 */
-			cross = new int[] {
-				/*  0 */ x-(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
-				/*  1 */ x+(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
-				/*  2 */ x+(ARM_WIDTH/2), 				y-(ARM_WIDTH/2),
-				/*  3 */ x+(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
-				/*  4 */ x+(ARM_LENGTH+(ARM_WIDTH/2)), 	y+(ARM_WIDTH/2),
-				/*  5 */ x+(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
-				/*  6 */ x+(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
-				/*  7 */ x-(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
-				/*  8 */ x-(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
-				/*  9 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y+(ARM_WIDTH/2),
-				/* 10 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
-				/* 11 */ x-(ARM_WIDTH/2),				y-(ARM_WIDTH/2)
-			};
+			 crosses[index] = new int[] {
+					/*  0 */ x-(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
+					/*  1 */ x+(ARM_WIDTH/2), 				y-(ARM_LENGTH+(ARM_WIDTH/2)),
+					/*  2 */ x+(ARM_WIDTH/2), 				y-(ARM_WIDTH/2),
+					/*  3 */ x+(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
+					/*  4 */ x+(ARM_LENGTH+(ARM_WIDTH/2)), 	y+(ARM_WIDTH/2),
+					/*  5 */ x+(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
+					/*  6 */ x+(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
+					/*  7 */ x-(ARM_WIDTH/2),				y+(ARM_LENGTH+(ARM_WIDTH/2)),
+					/*  8 */ x-(ARM_WIDTH/2),				y+(ARM_WIDTH/2),
+					/*  9 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y+(ARM_WIDTH/2),
+					/* 10 */ x-(ARM_LENGTH+(ARM_WIDTH/2)),  y-(ARM_WIDTH/2),
+					/* 11 */ x-(ARM_WIDTH/2),				y-(ARM_WIDTH/2)
+				};
 		}
 		
 		public void resetCross() {
-			cross = null;
+			crosses = null;
 		}
 		
 		public void newString(String string, int x, int y, Color color) {
@@ -268,11 +288,13 @@ public class SWTCalibration {
 				e.gc.setForeground(fc);
 				e.gc.setBackground(bc);
 			}
-			if(cross != null) {
+			if(crosses != null) {
 				// Paint fixation cross for current RFL
 				Color bc = e.gc.getBackground();
 				e.gc.setBackground(black);
-				e.gc.fillPolygon(cross);
+				for(int[] cross: crosses) {
+					e.gc.fillPolygon(cross);
+				}
 				e.gc.setBackground(bc);
 			}
 			if(string != null) {
