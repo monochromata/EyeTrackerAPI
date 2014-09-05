@@ -17,6 +17,29 @@ public class FilterChain<T> implements EyeTrackingListener {
 		this.filters = new CopyOnWriteArrayList<Filter<T>>(Arrays.asList(filters));
 	}
 	
+	public boolean hasFilter(Class<?> clazz) {
+		for(Filter<T> filter: filters) {
+			if(filter.getClass() == clazz)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Adds a filter to the beginning of the chain.
+	 * 
+	 * @param filter
+	 * 
+	 * @deprecated Filters should be ordered automatically based on the
+	 * 		attributes they create and consume. An exception should be
+	 *  	raised if an attempt is made to access an attribute not declared
+	 * 		as being consumed by the filter.
+	 */
+	public void prepend(Filter<T> filter) {
+		filters.add(0, filter);
+		runtimeFilters.add(0, filter);
+	}
+	
 	/**
 	 * Add a filter at runtime, e.g. to enable plugins to transparently access
 	 * information provided in the event stream without requiring the user to

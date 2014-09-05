@@ -1,7 +1,6 @@
 package rit.eyeTracking.EyeTrackerUtilities.udpClients;
 
 import rit.eyeTracking.Event;
-import rit.eyeTracking.Event.IDImpl;
 
 /**
  * iViewX-related event constants
@@ -20,7 +19,11 @@ public class IViewX {
 	
 	public static final Event.ID USER_EVENT = new Event.IDImpl("UserEvent");
 	
+	public static final String VALIDATION_COUNT = "VAL_CNT";
+	public static final String EXTENDED_VALIDATION_COUNT = "EVAL_CNT";
+	
 	public static final String PNT_INDEX = "PNT_INDEX";
+	public static final String PNT_COUNT = "PNT_CNT";
 	public static final String PNT_X = "PNT_X";
 	public static final String PNT_Y = "PNT_Y";
 	
@@ -31,6 +34,8 @@ public class IViewX {
 	public static final String RMSXR = "RMSXR";
 	public static final String RMSYR = "RMSYR";
 	public static final String RMSD = "RMSD";
+	public static final String RMSDL = "RMSDL";
+	public static final String RMSDR = "RMSDR";
 	
 	public static final String XD = "XD";
 	public static final String YD = "YD";
