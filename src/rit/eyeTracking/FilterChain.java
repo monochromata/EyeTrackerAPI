@@ -26,6 +26,21 @@ public class FilterChain<T> implements EyeTrackingListener {
 	}
 	
 	/**
+	 * Returns the instance of the given filterClass from the filterChain, or null.
+	 * 
+	 * @param filterClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <S extends Filter<T>> S getFilter(Class<?> filterClass) {
+		for(Filter<T> filter: filters) {
+			if(filter.getClass() == filterClass)
+				return (S)filter;
+		}
+		return null;
+	}
+	
+	/**
 	 * Adds a filter to the beginning of the chain.
 	 * 
 	 * @param filter
