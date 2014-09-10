@@ -102,4 +102,14 @@ public class FilterChain<T> implements EyeTrackingListener {
 			filter.notify(e, listener, mode);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("FilterChain:\n");
+		for(Filter<T> filter: filters) {
+			sb.append(filter.getClass().getName()+"\n");
+		}
+		return sb.toString();
+	}
 }
