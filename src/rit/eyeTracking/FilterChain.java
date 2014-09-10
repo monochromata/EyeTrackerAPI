@@ -2,6 +2,7 @@ package rit.eyeTracking;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,6 +39,15 @@ public class FilterChain<T> implements EyeTrackingListener {
 				return (S)filter;
 		}
 		return null;
+	}
+	
+	public List<Filter<T>> findFilters(Class<?> classOrInterface) {
+		List<Filter<T>> results = new LinkedList<Filter<T>>();
+		for(Filter<T> filter: filters) {
+			if(classOrInterface.isAssignableFrom(filter.getClass()))
+				results.add(filter);
+		}
+		return results;
 	}
 	
 	/**
