@@ -31,7 +31,7 @@ import rit.eyeTracking.SmoothingFilters.Filter;
  * @author cde7825
  * 
  */
-public abstract class EyeTrackingMediator {
+public abstract class EyeTrackingMediator<E extends Event> {
 
 	// protected volatile ArrayList drawables = new ArrayList();
 	protected EyeTrackingListener.Mode mode;
@@ -44,7 +44,7 @@ public abstract class EyeTrackingMediator {
 	protected Point canvasPoint;
 	protected int canvasWidth;
 	protected int canvasHeight;
-	protected final Filter filter;
+	protected final Filter<E> filter;
 	protected Point pointOnCanvas;
 	protected boolean shouldStop;
 	protected boolean printExceptions = true;
@@ -61,7 +61,7 @@ public abstract class EyeTrackingMediator {
 	 * @param display
 	 *            - the display being used
 	 */
-	public EyeTrackingMediator(Filter filter, int display) {
+	public EyeTrackingMediator(Filter<E> filter, int display) {
 		if(filter == null)
 			throw new NullPointerException("filter is null");
 		this.filter = filter;
@@ -125,7 +125,7 @@ public abstract class EyeTrackingMediator {
 	 * @param newGazePoint
 	 *            - the new point from the eye tracker
 	 */
-	protected abstract void fire(Event e, Mode mode);
+	protected abstract void fire(E e, Mode mode);
 
 	/*
 	 * try{ MTCanvas can = mtApp.getCurrentScene().getCanvas();
@@ -172,7 +172,7 @@ public abstract class EyeTrackingMediator {
 
 					synchronized (filter) {
 						try {
-							Event e = filter.getNewEvent();
+							E e = filter.getNewEvent();
 							if(e != null) {
 								fire(e, mode);
 							}

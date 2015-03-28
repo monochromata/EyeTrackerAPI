@@ -8,17 +8,20 @@ import rit.eyeTracking.Event;
  * 
  * TODO: split into two filters: one for smooting and one for fixation detection
  * 
+ * @param <E> The type of event passed through the filter chain
+ * 	({@link Event} by default)
+ * 
  * @author Corey Engelman
  * 
  */
-public abstract class Filter {
+public abstract class Filter<E extends Event> {
 	
 	public static final String FILTERED_POR_X = "rit.eyeTracking.SmoothingFilters.FILTERED_POR_X";
 	public static final String FILTERED_POR_Y = "rit.eyeTracking.SmoothingFilters.FILTERED_POR_Y";
 
 	protected int filterIntensity = 0;
 	protected int filterCounter = 0;
-	protected Event newEvent;
+	protected E newEvent;
 	protected boolean newEventAvailable = false;
 	protected boolean eventRead = false;
 
@@ -53,7 +56,7 @@ public abstract class Filter {
 	 *            type: l - left|r - right|b - both, left eye x position, right
 	 *            eye x position, left eye y position, right eye y position}
 	 */
-	public abstract void filter(Event e);
+	public abstract void filter(E e);
 
 	public boolean newEventAvailable() {
 		boolean copy = this.newEventAvailable;
@@ -89,7 +92,7 @@ public abstract class Filter {
 	 * 
 	 * @return - the filtered gaze point
 	 */
-	public Event getNewEvent() {
+	public E getNewEvent() {
 		return newEvent;
 	}
 

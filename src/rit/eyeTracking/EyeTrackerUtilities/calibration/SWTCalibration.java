@@ -105,10 +105,11 @@ public class SWTCalibration {
 	
 	public void showPoints(final Point[] points) {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
 			@Override public void run() {
-				paintListener.newCrosses(points);
-				getShell().redraw();
+				if(isActive()) {
+					paintListener.newCrosses(points);
+					getShell().redraw();
+				}
 			}});
 	}
 	

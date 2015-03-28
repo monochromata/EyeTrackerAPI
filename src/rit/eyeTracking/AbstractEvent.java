@@ -7,16 +7,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventImpl implements Event, Serializable {
+public abstract class AbstractEvent implements Event, Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6719375361854591315L;
 	private final ID id;
 	private final Map<String,Object> attributes;
 	
-	public EventImpl(ID id, Map<String,Object> initialAttributes) {
+	public AbstractEvent(ID id, Map<String,Object> initialAttributes) {
 		this.id = id;
 		this.attributes = initialAttributes;
 	}
@@ -28,12 +25,16 @@ public class EventImpl implements Event, Serializable {
 	
 	@Override
 	public void addAttribute(String name, Object value) {
+		/*if(attributes.containsKey(name)) {
+			System.err.println("AbstractEvent: overwriting old "+name+" value="+attributes.get(name)+" with "+value);
+		}*/
 		attributes.put(name, value);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getAttribute(String name) {
-		return attributes.get(name);
+	public <T> T getAttribute(String name) {
+		return (T)attributes.get(name);
 	}
 
 	@Override
@@ -52,9 +53,9 @@ public class EventImpl implements Event, Serializable {
 	}
 
 	@Override
-	public Event getSerializable() {
+	public Event getSerializable(EventFactory factory) {
 		Map<String,Object> attr = new HashMap<String,Object>(attributes.size());
-		EventImpl copy = new EventImpl(id, attr);
+		Event copy = factory.createEvent(id, attr);
 		for(String key: attributes.keySet()) {
 			Object value = attributes.get(key);
 			if(value instanceof Serializable

@@ -12,10 +12,12 @@ import java.util.Map;
 import org.eclipse.swt.graphics.Point;
 
 import rit.eyeTracking.Event;
-import rit.eyeTracking.EventImpl;
+import rit.eyeTracking.AbstractEvent;
+import rit.eyeTracking.EventFactory;
 import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 
 public class ITUGazeTrackerComm extends EyeTrackerClient {
+	private final EventFactory eventFactory;
 	private DatagramSocket ds;
 	private DatagramPacket dp;
 	private boolean stop = false;
@@ -23,7 +25,8 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	private InetAddress iViewX = null;
 	private InetAddress ituGT;
 
-	public ITUGazeTrackerComm() {
+	public ITUGazeTrackerComm(EventFactory eventFactory) {
+		this.eventFactory = eventFactory;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 					attr.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 					attr.put(Event.POR_X, (int)Double.parseDouble(tokens[2]));
 					attr.put(Event.POR_Y, (int) Double.parseDouble(tokens[3]));
-					filter.filter(new EventImpl(Event.RAW_EVENT, attr));
+					filter.filter(eventFactory.createEvent(Event.RAW_EVENT, attr));
 				}
 			}
 		}

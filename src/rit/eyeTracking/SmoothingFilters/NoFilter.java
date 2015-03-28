@@ -8,10 +8,10 @@ import rit.eyeTracking.Event;
  * @author Sebastian Lohmeier <sl@monochromata.de>
  *
  */
-public class NoFilter extends Filter {
+public class NoFilter<E extends Event> extends Filter<E> {
 
 	@Override
-	public synchronized void filter(Event e) {
+	public synchronized void filter(E e) {
 		newEvent = e;
 		newEventAvailable = true;
 		notifyAll();

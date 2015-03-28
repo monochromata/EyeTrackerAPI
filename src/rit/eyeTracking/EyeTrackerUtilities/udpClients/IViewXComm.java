@@ -22,7 +22,8 @@ import org.eclipse.swt.graphics.Point;
 import org.omg.CORBA.RepositoryIdHelper;
 
 import rit.eyeTracking.Event;
-import rit.eyeTracking.EventImpl;
+import rit.eyeTracking.AbstractEvent;
+import rit.eyeTracking.EventFactory;
 import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 import rit.eyeTracking.SmoothingFilters.Filter;
 
@@ -157,10 +158,10 @@ public class IViewXComm extends EyeTrackerClient {
 	
 	protected static final Pattern RESPONSE_PATTERN_VLS =
 		Pattern.compile("\\AET_VLS\\s+(?<ET>left|right)\\s+(?<RMSX>[0-9\\-\\.]+)\\s+(?<RMSY>[0-9\\-\\.]+)"
-				+"\\s+(?<RMSD>[0-9\\-\\.]+)\\s+(?<XD>[0-9\\-\\.]+)°\\s+(?<YD>[0-9\\-\\.]+)°\\z");
+				+"\\s+(?<RMSD>[0-9\\-\\.]+)\\s+(?<XD>[0-9\\-\\.]+)ï¿½\\s+(?<YD>[0-9\\-\\.]+)ï¿½\\z");
 	protected static final Pattern RESPONSE_PATTERN_VLX =
-		Pattern.compile("\\AET_VLX\\s+(?<RMSXL>[0-9\\-\\.]+)\\s+(?<RMSYL>[0-9\\-\\.]+)\\s+(?<XDL>[0-9\\-\\.]+)°\\s+(?<YDL>[0-9\\-\\.]+)°"
-				+"\\s+(?<RMSXR>[0-9\\-\\.]+)\\s+(?<RMSYR>[0-9\\-\\.]+)\\s+(?<XDR>[0-9\\-\\.]+)°\\s+(?<YDR>[0-9\\-\\.]+)°\\z");
+		Pattern.compile("\\AET_VLX\\s+(?<RMSXL>[0-9\\-\\.]+)\\s+(?<RMSYL>[0-9\\-\\.]+)\\s+(?<XDL>[0-9\\-\\.]+)ï¿½\\s+(?<YDL>[0-9\\-\\.]+)ï¿½"
+				+"\\s+(?<RMSXR>[0-9\\-\\.]+)\\s+(?<RMSYR>[0-9\\-\\.]+)\\s+(?<XDR>[0-9\\-\\.]+)ï¿½\\s+(?<YDR>[0-9\\-\\.]+)ï¿½\\z");
 	
 	protected static final Pattern RESPONSE_PATTERN_FIXATION_START =
 		Pattern.compile("\\AET_FIX\\s+(?<ET>l|r|b)\\s+(?<TU>\\d+)\\s+(?<SX>[0-9\\-\\.]+)\\s+(?<SY>[0-9\\-\\.]+)\\z");
@@ -168,6 +169,7 @@ public class IViewXComm extends EyeTrackerClient {
 		Pattern.compile("\\AET_EFX\\s+(?<ET>l|r|b)\\s+(?<TUS>\\d+)\\s+(?<TUE>\\d+)\\s+(?<DU>\\d+)\\s+(?<SX>[0-9\\-\\.]+)\\s+(?<SY>[0-9\\-\\.]+)\\z");
 	
 	private final IViewXProtocol protocol;
+	private final EventFactory eventFactory;
 	
 	/*
  in:ET_SPL 100527771763 b 788 788 258 258 12.105186 10.957320 12.105186 10.957320 -59.875  3.226 14.819 17.609 586.966 580.848 379.807800 654.019907 438.804785 425.142153 3.09 2.82 3
@@ -268,8 +270,9 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	 * @see #connect()
 	 * @see #start()
 	 */
-	public IViewXComm(IViewXProtocol protocol) {
+	public IViewXComm(IViewXProtocol protocol, EventFactory eventFactory) {
 		this.protocol = protocol;
+		this.eventFactory = eventFactory;
 	}
 
 	// </editor-fold>
@@ -505,7 +508,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 								if(groupCYR != null)
 									map.put(Event.CORNEAL_REFLEX_POS_Y_R, Float.parseFloat(groupCYR));
 								
-								Event e = new EventImpl(Event.RAW_EVENT, map);
+								Event e = eventFactory.createEvent(Event.RAW_EVENT, map);
 								filter.filter(e);
 								matched = true;
 								info(Event.RAW_EVENT+" parsed\n");
@@ -520,7 +523,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(Event.EYE_TYPE, fixStartMatcher.group("ET"));
 									map.put(Event.POR_X, (int)Float.parseFloat(fixStartMatcher.group("SX")));
 									map.put(Event.POR_Y, (int)Float.parseFloat(fixStartMatcher.group("SY")));
-									Event e = new EventImpl(Event.FIXATION_START, map);
+									Event e = eventFactory.createEvent(Event.FIXATION_START, map);
 									filter.filter(e);
 									matched = true;
 									info(Event.FIXATION_START+" parsed\n");
@@ -538,7 +541,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(Event.EYE_TYPE, fixEndMatcher.group("ET"));
 									map.put(Event.POR_X, (int)Float.parseFloat(fixEndMatcher.group("SX")));
 									map.put(Event.POR_Y, (int)Float.parseFloat(fixEndMatcher.group("SY")));
-									Event e = new EventImpl(Event.FIXATION_END, map);
+									Event e = eventFactory.createEvent(Event.FIXATION_END, map);
 									filter.filter(e);
 									matched = true;
 									info(Event.FIXATION_END+" parsed\n");
@@ -561,7 +564,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 										info("Unknown eye type in "+responseString+"\n");
 									}
 								}
-								Event e = new EventImpl(IViewX.CALIBRATION_STARTED, map);
+								Event e = eventFactory.createEvent(IViewX.CALIBRATION_STARTED, map);
 								filter.filter(e);
 								matched = true;
 								info(IViewX.CALIBRATION_STARTED+" parsed\n");
@@ -575,7 +578,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(IViewX.PNT_INDEX, pntMatcher.group("I"));
 									map.put(IViewX.PNT_X, Integer.parseInt(pntMatcher.group("X")));
 									map.put(IViewX.PNT_Y, Integer.parseInt(pntMatcher.group("Y")));
-									Event e = new EventImpl(IViewX.CALIBRATION_POINT_DATA, map);
+									Event e = eventFactory.createEvent(IViewX.CALIBRATION_POINT_DATA, map);
 									filter.filter(e);
 									matched = true;
 									info(IViewX.CALIBRATION_POINT_DATA+" parsed\n");
@@ -587,7 +590,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 								Map<String,Object> map = new HashMap<String,Object>();
 								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
 								map.put(IViewX.PNT_INDEX, Integer.parseInt(parts[1]));
-								Event e = new EventImpl(IViewX.CALIBRATION_POINT_CHANGE, map);
+								Event e = eventFactory.createEvent(IViewX.CALIBRATION_POINT_CHANGE, map);
 								filter.filter(e);
 								matched = true;
 								info(IViewX.CALIBRATION_POINT_CHANGE+" parsed\n");
@@ -596,7 +599,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 							if(!matched && responseString.startsWith(MSG_ABORT_CALIBRATION)) {
 								Map<String,Object> map = new HashMap<String,Object>();
 								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
-								Event e = new EventImpl(IViewX.CALIBRATION_ABORTED, map);
+								Event e = eventFactory.createEvent(IViewX.CALIBRATION_ABORTED, map);
 								filter.filter(e);
 								matched = true;
 								info(IViewX.CALIBRATION_ABORTED+" parsed\n");
@@ -605,7 +608,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 							if(!matched && responseString.startsWith(MSG_END_CALIBRATION)) {
 								Map<String,Object> map = new HashMap<String,Object>();
 								map.put(Event.CLIENT_TIMESTAMP_MS, System.currentTimeMillis());
-								Event e = new EventImpl(IViewX.CALIBRATION_SUCCESSFUL, map);
+								Event e = eventFactory.createEvent(IViewX.CALIBRATION_SUCCESSFUL, map);
 								filter.filter(e);
 								matched = true;
 								info(IViewX.CALIBRATION_SUCCESSFUL+" parsed\n");
@@ -631,7 +634,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(IViewX.RMSD, Float.parseFloat(vlsMatcher.group("RMSD")));
 									map.put(IViewX.XD, Float.parseFloat(vlsMatcher.group("XD")));
 									map.put(IViewX.YD, Float.parseFloat(vlsMatcher.group("YD")));
-									Event e = new EventImpl(IViewX.CALIBRATION_ACCURRACY, map);
+									Event e = eventFactory.createEvent(IViewX.CALIBRATION_ACCURRACY, map);
 									filter.filter(e);
 									matched = true;
 									info(IViewX.CALIBRATION_ACCURRACY+" parsed\n");
@@ -651,7 +654,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 									map.put(IViewX.RMSYR, Float.parseFloat(vlxMatcher.group("RMSYR")));
 									map.put(IViewX.XDR, Float.parseFloat(vlxMatcher.group("XDR")));
 									map.put(IViewX.YDR, Float.parseFloat(vlxMatcher.group("YDR")));
-									Event e = new EventImpl(IViewX.VALIDATION_ACCURRACY, map);
+									Event e = eventFactory.createEvent(IViewX.VALIDATION_ACCURRACY, map);
 									filter.filter(e);
 									matched = true;
 									info(IViewX.VALIDATION_ACCURRACY+" parsed\n");

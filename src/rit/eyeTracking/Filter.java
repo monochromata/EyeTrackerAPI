@@ -6,10 +6,12 @@ package rit.eyeTracking;
  * 
  * @param <T> The type of configuration object provided when starting
  * 	/ stopping the filter.
+ * @param <E> The type of event passed through the filter chain
+ * 	({@link Event} by default)
  */
-public interface Filter<T> extends EyeTrackingListener {
-	public void start(T obj, EyeTrackingListener listener, Mode mode);
-	public void stop(T obj, EyeTrackingListener listener, Mode mode);
+public interface Filter<T,E extends Event> extends EyeTrackingListener<E> {
+	public void start(T obj, EyeTrackingListener<E> listener, Mode mode);
+	public void stop(T obj, EyeTrackingListener<E> listener, Mode mode);
 	
 	/**
 	 * Return the names of attributes that this filter requires
@@ -75,5 +77,5 @@ public interface Filter<T> extends EyeTrackingListener {
 	 * @param mode Either TRACKING_MODE or REPLAY_MODE
 	 * @see #getAttributesRequired()
 	 */
-	public void notify(Event event, EyeTrackingListener listener, Mode mode);
+	public void notify(E event, EyeTrackingListener<E> listener, Mode mode);
 }

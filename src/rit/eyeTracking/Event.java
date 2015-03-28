@@ -9,7 +9,8 @@ import java.util.Map;
  * TODO: Remove dependency on TET attributes by using subclasses as events
  */
 public interface Event {
-	
+
+	public static final String RAW_EVENT_ID = "RAW";
 	/**
 	 * Name of the vendor-neutral standard {@link Boolean} attribute
 	 * that is set to true for events that denote non-aggregated eye
@@ -23,8 +24,9 @@ public interface Event {
 	 * @see #FIXATION_START
 	 * @see #FIXATION_END
 	 */
-	public static final ID RAW_EVENT = new IDImpl("RAW");
-	
+	public static final ID RAW_EVENT = new IDImpl(RAW_EVENT_ID);
+
+	public static final String FIXATION_START_ID = "FS";
 	/**
 	 * Name of the vendor-neutral standard {@link Boolean} attribute
 	 * that is set to true if the event signals the onset of a fixation.
@@ -40,8 +42,9 @@ public interface Event {
 	 * @see #FIXATION_END
 	 * @see #RAW_EVENT
 	 */
-	public static final ID FIXATION_START = new IDImpl("FS");
+	public static final ID FIXATION_START = new IDImpl(FIXATION_START_ID);
 	
+	public static final String FIXATION_END_ID = "FE";
 	/**
 	 * Name of the vendor-neutral standard {@link Boolean} attribute
 	 * that is set to true if the event signals the end of a fixation.
@@ -57,21 +60,28 @@ public interface Event {
 	 * @see #FIXATION_START
 	 * @see #RAW_EVENT
 	 */
-	public static final ID FIXATION_END = new IDImpl("FE");
+	public static final ID FIXATION_END = new IDImpl(FIXATION_END_ID);
 	
-	public static final ID SACCADE_START = new IDImpl("SaccS");
-	public static final ID SACCADE_END = new IDImpl("SaccE");
+	public static final String SACCADE_START_ID = "SaccS";
+	public static final ID SACCADE_START = new IDImpl(SACCADE_START_ID);
 	
+	public static final String SACCADE_END_ID = "SaccE";
+	public static final ID SACCADE_END = new IDImpl(SACCADE_END_ID);
+
+	public static final String BLINK_ID = "BL";
 	/**
 	 * A blink event to be detected when a single data sample or a short
 	 * sequence of data samples does not contain eye coordinates.
 	 * 
 	 * @deprecated Use BLINK_START and BLINK_END instead
 	 */
-	public static final ID BLINK = new IDImpl("BL");
+	public static final ID BLINK = new IDImpl(BLINK_ID);
+
+	public static final String BLINK_START_ID = "BS";
+	public static final ID BLINK_START = new IDImpl(BLINK_START_ID);
 	
-	public static final ID BLINK_START = new IDImpl("BS");
-	public static final ID BLINK_END = new IDImpl("BE");
+	public static final String BLINK_END_ID = "BE";
+	public static final ID BLINK_END = new IDImpl(BLINK_END_ID);
 	
 	// TODO: It may be desirable to provide microsecond-timestamps in the future
 	
@@ -357,7 +367,7 @@ public interface Event {
 	 * @see #addAttribute(String, Object)
 	 * @see EyeTrackingListener#notify(Event)
 	 */
-	public Object getAttribute(String name);
+	public <T> T getAttribute(String name);
 	
 	/**
 	 * Returns a non-modifiable map of the attributes held by the event.
@@ -368,7 +378,25 @@ public interface Event {
 	 * Returns a copy of the event with all attributes removed that
 	 * are not serializable.
 	 */
-	public Event getSerializable();
+	public Event getSerializable(EventFactory factory);
+	
+	/**
+	 * Returns true, if the event is sent to an {@link EyeTrackingListener}
+	 * or a collection of {@link EyeTrackingListener}s for the first time.
+	 * Returns false otherwise, i.e. in applications that can rewind events
+	 * and send them to {@link EyeTrackingListener}s repeatedly, from the
+	 * second time on.
+	 * 
+	 * Implementations of this interface should maintain an
+	 * implementation-dependent and non-public way of setting the state
+	 * returned by this accessor method.
+	 * 
+	 * @return Whether this event has been passed to this or other
+	 * 	{@link EyeTrackingListeners} before, or not.
+	 */
+	public boolean isNew();
+	
+	
 	
 	/**
 	 * Release all resources associated with the event.

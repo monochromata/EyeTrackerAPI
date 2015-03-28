@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 
+import rit.eyeTracking.Event;
 import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 import rit.eyeTracking.SmoothingFilters.Filter;
 
@@ -14,10 +15,14 @@ import rit.eyeTracking.SmoothingFilters.Filter;
  * An abstract class for communicating and receiving gaze sample points from an
  * eye tracker via UDP.
  * 
+ * 
+ * @param <E> The type of event passed through the filter chain
+ * 	({@link Event} by default)
+ * 
  * @author Corey Engelman
  * 
  */
-public abstract class EyeTrackerClient extends Thread {
+public abstract class EyeTrackerClient<E extends Event> extends Thread {
 	
 	public enum Eye {
 		LEFT, RIGHT, BOTH
@@ -26,7 +31,7 @@ public abstract class EyeTrackerClient extends Thread {
 	/**
 	 * Represents the current sample point from the eye tracker.
 	 */
-	protected Filter filter;
+	protected Filter<E> filter;
 	private final List<Listener> listeners = new ArrayList<Listener>();
 
 	/**
@@ -43,7 +48,7 @@ public abstract class EyeTrackerClient extends Thread {
 		this.setName(getClass().getSimpleName());
 	}
 	
-	public void configure(Filter filter, Configuration config) {
+	public void configure(Filter<E> filter, Configuration config) {
 		this.filter = filter;
 	}
 	
@@ -87,7 +92,7 @@ public abstract class EyeTrackerClient extends Thread {
 		clientOperation();
 	}
 	
-	public Filter getFilter() {
+	public Filter<E> getFilter() {
 		return filter;
 	}
 

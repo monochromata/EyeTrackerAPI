@@ -8,18 +8,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Maintains the connections between sources, filters and drains.
+ * 
+ * @param <T> The type of configuration object provided when starting
+ * 	/ stopping the filter.
+ * @param <E> The type of event passed through the filter chain
+ * 	({@link Event} by default)
  */
-public class FilterChain<T> implements EyeTrackingListener {
+public class FilterChain<T,E extends Event> implements EyeTrackingListener<E> {
 	
-	private final List<Filter<T>> filters;
-	private final List<Filter<T>> runtimeFilters = new ArrayList<Filter<T>>();
+	protected final List<Filter<T,E>> filters;
+	protected final List<Filter<T,E>> runtimeFilters = new ArrayList<Filter<T,E>>();
 	
-	public FilterChain(Filter<T>[] filters) {
-		this.filters = new CopyOnWriteArrayList<Filter<T>>(Arrays.asList(filters));
+	public FilterChain(Filter<T,E>[] filters) {
+		this.filters = new CopyOnWriteArrayList<Filter<T,E>>(Arrays.asList(filters));
 	}
 	
 	public boolean hasFilter(Class<?> clazz) {
-		for(Filter<T> filter: filters) {
+		for(Filter<T,E> filter: filters) {
 			if(filter.getClass() == clazz)
 				return true;
 		}
@@ -33,17 +38,17 @@ public class FilterChain<T> implements EyeTrackingListener {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public <S extends Filter<T>> S getFilter(Class<?> filterClass) {
-		for(Filter<T> filter: filters) {
+	public <S extends Filter<T,E>> S getFilter(Class<?> filterClass) {
+		for(Filter<T,E> filter: filters) {
 			if(filter.getClass() == filterClass)
 				return (S)filter;
 		}
 		return null;
 	}
 	
-	public List<Filter<T>> findFilters(Class<?> classOrInterface) {
-		List<Filter<T>> results = new LinkedList<Filter<T>>();
-		for(Filter<T> filter: filters) {
+	public List<Filter<T,E>> findFilters(Class<?> classOrInterface) {
+		List<Filter<T,E>> results = new LinkedList<Filter<T,E>>();
+		for(Filter<T,E> filter: filters) {
 			if(classOrInterface.isAssignableFrom(filter.getClass()))
 				results.add(filter);
 		}
@@ -60,7 +65,7 @@ public class FilterChain<T> implements EyeTrackingListener {
 	 *  	raised if an attempt is made to access an attribute not declared
 	 * 		as being consumed by the filter.
 	 */
-	public void prepend(Filter<T> filter) {
+	public void prepend(Filter<T,E> filter) {
 		filters.add(0, filter);
 		runtimeFilters.add(0, filter);
 	}
@@ -72,7 +77,7 @@ public class FilterChain<T> implements EyeTrackingListener {
 	 * 
 	 * @param filter
 	 */
-	public void add(Filter<T> filter) {
+	public void add(Filter<T,E> filter) {
 		filters.add(filter);
 		runtimeFilters.add(filter);
 	}
@@ -86,7 +91,7 @@ public class FilterChain<T> implements EyeTrackingListener {
 	 * 		added via {@link #add(Filter<T>)}
 	 * @see #add(Filter)
 	 */
-	public void remove(Filter<T> filter) {
+	public void remove(Filter<T,E> filter) {
 		if(runtimeFilters.contains(filter)) {
 			filters.remove(filter);
 			runtimeFilters.remove(filter);
@@ -95,20 +100,20 @@ public class FilterChain<T> implements EyeTrackingListener {
 		}
 	}
 	
-	public void start(T obj, EyeTrackingListener listener, Mode mode) {
-		for(Filter<T> filter : filters) {
+	public void start(T obj, EyeTrackingListener<E> listener, Mode mode) {
+		for(Filter<T,E> filter : filters) {
 			filter.start(obj, listener, mode);
 		}
 	}
 	
-	public void stop(T obj, EyeTrackingListener listener, Mode mode) {
-		for(Filter<T> filter : filters) {
+	public void stop(T obj, EyeTrackingListener<E> listener, Mode mode) {
+		for(Filter<T,E> filter : filters) {
 			filter.stop(obj, listener, mode);
 		}
 	}
 	@Override
-	public void notify(Event e, EyeTrackingListener listener, Mode mode) {
-		for(Filter<T> filter : filters) {
+	public void notify(E e, EyeTrackingListener<E> listener, Mode mode) {
+		for(Filter<T,E> filter : filters) {
 			filter.notify(e, listener, mode);
 		}
 	}
@@ -117,7 +122,7 @@ public class FilterChain<T> implements EyeTrackingListener {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("FilterChain:\n");
-		for(Filter<T> filter: filters) {
+		for(Filter<T,E> filter: filters) {
 			sb.append(filter.getClass().getName()+"\n");
 		}
 		return sb.toString();
