@@ -16,8 +16,11 @@ import rit.eyeTracking.AbstractEvent;
 import rit.eyeTracking.EventFactory;
 import rit.eyeTracking.EyeTrackerUtilities.calibration.SWTCalibration;
 
-public class ITUGazeTrackerComm extends EyeTrackerClient {
-	private final EventFactory eventFactory;
+/**
+ * TODO: Add support for calibration and validation
+ */
+public class ITUGazeTrackerComm extends EyeTrackerClient<Event> {
+	private final EventFactory<Event> eventFactory;
 	private DatagramSocket ds;
 	private DatagramPacket dp;
 	private boolean stop = false;
@@ -25,7 +28,7 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	private InetAddress iViewX = null;
 	private InetAddress ituGT;
 
-	public ITUGazeTrackerComm(EventFactory eventFactory) {
+	public ITUGazeTrackerComm(EventFactory<Event> eventFactory) {
 		this.eventFactory = eventFactory;
 	}
 
@@ -116,19 +119,6 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	@Override
 	public void sendBufferMessage(String message) {
 	}
-	
-	@Override
-	public void calibrate(SWTCalibration calibration, CalibrationListener listener)
-			throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void calibrate(int numberOfPoints, SWTCalibration calibration,
-			CalibrationListener listener) throws IOException,
-			UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public void abortCalibration() throws IOException,
@@ -153,6 +143,20 @@ public class ITUGazeTrackerComm extends EyeTrackerClient {
 	@Override
 	public void abortValidation() throws IOException,
 			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void calibrate(Eye eye, SWTCalibration calibration,
+			CalibrationListener listener) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void calibrate(Eye eye, int numberOfPoints,
+			SWTCalibration calibration, CalibrationListener listener)
+			throws IOException, UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 }
