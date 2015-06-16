@@ -38,6 +38,9 @@ public interface Event {
 	 * TODO: Need to define values for fixation durations and
 	 * define/leave open what what other attributes will/can be set
 	 * in conjunction with this attribute.
+	 * TODO: Distinguish between on-line and off-line fixations either
+	 * via the event ID or via attributes (e.g. a missing duration attribute
+	 * for FIXATION_START could indicate a fixation that was detected on-line)
 	 * 
 	 * @see #FIXATION_END
 	 * @see #RAW_EVENT
