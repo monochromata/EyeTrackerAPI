@@ -7,7 +7,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 public class SWTCalibration {
 	private boolean readingCalibration;
@@ -43,7 +42,7 @@ public class SWTCalibration {
 	
 	public Point getCenterPoint() {
 		if(centerPoint == null) {
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+			shell.getDisplay().syncExec(new Runnable() {
 				@Override
 				public void run() {
 					Rectangle bounds = shell.getBounds();
@@ -95,7 +94,7 @@ public class SWTCalibration {
 	
 	
 	public void showPoint(final Point p) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				paintListener.newCross(p.x, p.y);
@@ -104,7 +103,7 @@ public class SWTCalibration {
 	}
 	
 	public void showPoints(final Point[] points) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override public void run() {
 				if(isActive()) {
 					paintListener.newCrosses(points);
@@ -118,7 +117,7 @@ public class SWTCalibration {
 	}
 	
 	public void showString(final String string, final Point p, final Color color) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if(isActive()) {
@@ -129,7 +128,7 @@ public class SWTCalibration {
 	}
 	
 	public void endPoint() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if(isActive()) {
@@ -140,7 +139,7 @@ public class SWTCalibration {
 	}
 	
 	public void endString() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				if(isActive()) {
@@ -151,7 +150,7 @@ public class SWTCalibration {
 	}
 	
 	public void setGreenFeedback() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				paintListener.setGreenFeedback();
@@ -160,7 +159,7 @@ public class SWTCalibration {
 	}
 	
 	public void resetFeedback() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+		shell.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				paintListener.resetFeedback();
@@ -173,7 +172,7 @@ public class SWTCalibration {
 	}
 	
 	public void close() {
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+		shell.getDisplay().syncExec(new Runnable() {
 			@Override
 			public void run() {
 				if(sentencePresenter != null)
