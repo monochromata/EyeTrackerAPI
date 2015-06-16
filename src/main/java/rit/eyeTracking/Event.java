@@ -430,28 +430,41 @@ public interface Event {
 	
 	public class IDImpl implements ID {
 		private final String id;
-		private final int hashCode;
 		
 		public IDImpl(String id) {
 			this.id = id;
-			this.hashCode = id.hashCode();
 		}
 
 		@Override
 		public String getLoggableID() {
 			return id;
 		}
-		
+
 		@Override
 		public int hashCode() {
-			return hashCode;
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			return result;
 		}
-		
+
 		@Override
-		public boolean equals(Object other) {
-			return other != null && other instanceof ID && other.hashCode() == hashCode();
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			IDImpl other = (IDImpl) obj;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			return true;
 		}
-		
+
 		@Override
 		public String toString() {
 			return id;

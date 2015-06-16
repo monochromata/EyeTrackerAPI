@@ -1,15 +1,11 @@
 package rit.eyeTracking;
 
 import static org.junit.Assert.*;
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
 
 public class AbstractEventTest {
-
-	@Test
-	public void testHashCode() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	public void testAbstractEvent() {
@@ -52,8 +48,11 @@ public class AbstractEventTest {
 	}
 
 	@Test
-	public void testEqualsObject() {
-		fail("Not yet implemented");
+	public void testEqualsContract() {
+		EqualsVerifier
+			.forClass(AbstractEvent.class)
+			.usingGetClass()
+			.verify();
 	}
 
 }
