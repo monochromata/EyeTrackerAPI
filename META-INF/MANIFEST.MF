@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: EyeTrackerAPI
-Bundle-SymbolicName: EyeTrackerAPI;singleton:=true
+Bundle-Name: rit.eyeTracking
+Bundle-SymbolicName: rit.eyeTracking;singleton:=true
 Bundle-Version: 0.1.5
 Bundle-Activator: rit.eyeTracking.Activator
 Require-Bundle: org.eclipse.ui,
