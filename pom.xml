@@ -6,7 +6,6 @@
   <name>rit.eyeTracking</name>
   <description>A fork of the Java eye tracker API initially provided at https://code.google.com/p/eye-tracker-api/</description>
   <build>
-    <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
