@@ -318,6 +318,11 @@ INFO:eyetracking.api.RAW_EVENT parsed
 	}
 	
 	@Override
+	public synchronized boolean isCalibrated() {
+		return state.isCalibrated();
+	}
+	
+	@Override
 	public synchronized boolean isTracking() {
 		return state.isTracking();
 	}
@@ -695,6 +700,7 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		public abstract void connect() throws IOException;
 		public abstract void disconnect() throws IOException;
 		public abstract boolean isConnected();
+		public abstract boolean isCalibrated();
 		public abstract boolean isTracking();
 		public abstract boolean toggle() throws IOException;
 		public abstract void calibrate(Eye eye, int numberOfPoints, SWTCalibration calibration,
@@ -759,6 +765,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 
 		@Override
 		public boolean isConnected() {
+			return false;
+		}
+		
+		@Override
+		public boolean isCalibrated() {
+			// TODO: Provide a state-preserving implementation instead
 			return false;
 		}
 		
@@ -828,6 +840,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 		@Override
 		public boolean isConnected() {
 			return true;
+		}
+		
+		@Override
+		public boolean isCalibrated() {
+			// TODO: Provide a state-preserving implementation instead
+			return false;
 		}
 		
 		@Override
@@ -1053,6 +1071,12 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			throw new IllegalStateException();
 		}
 		
+		@Override
+		public boolean isCalibrated() {
+			// TODO: Provide a state-preserving implementation instead
+			return false;
+		}
+		
 	}
 	
 	private class ValidatingExtended extends Connected {
@@ -1121,10 +1145,21 @@ INFO:eyetracking.api.RAW_EVENT parsed
 			throw new IllegalStateException();
 		}
 		
+		@Override
+		public boolean isCalibrated() {
+			// TODO: Provide a state-preserving implementation instead
+			return false;
+		}
 	}
 	
 	private class Tracking extends Connected {
 
+		@Override
+		public boolean isCalibrated() {
+			// TODO: Provide a state-preserving implementation instead
+			return false;
+		}
+		
 		@Override
 		public boolean isTracking() {
 			return true;

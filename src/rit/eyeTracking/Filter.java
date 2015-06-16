@@ -10,7 +10,20 @@ package rit.eyeTracking;
  * 	({@link Event} by default)
  */
 public interface Filter<T,E extends Event> extends EyeTrackingListener<E> {
+	
+	/**
+	 * Starts the filter.
+	 * 
+	 * The listener and mode provided to this method can be used until the first
+	 * invocation of the {@link #stop(Object, EyeTrackingListener, rit.eyeTracking.EyeTrackingListener.Mode)}
+	 * subsequent to the invocation of this method terminates.
+	 * 
+	 * @param obj
+	 * @param listener
+	 * @param mode
+	 */
 	public void start(T obj, EyeTrackingListener<E> listener, Mode mode);
+	
 	public void stop(T obj, EyeTrackingListener<E> listener, Mode mode);
 	
 	/**

@@ -93,6 +93,11 @@ public class ITUGazeTrackerComm extends EyeTrackerClient<Event> {
 	}
 
 	@Override
+	public boolean isCalibrated() {
+		throw new RuntimeException("Not yet implemented");
+	}
+	
+	@Override
 	public boolean isTracking() {
 		return connected;
 	}

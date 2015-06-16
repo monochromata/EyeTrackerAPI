@@ -115,6 +115,8 @@ public abstract class EyeTrackerClient<E extends Event> extends Thread {
 	 */
 	public abstract boolean isConnected();
 
+	public abstract boolean isCalibrated();
+	
 	public abstract boolean isTracking();
 	
 	/**
