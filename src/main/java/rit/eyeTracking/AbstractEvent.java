@@ -25,9 +25,6 @@ public abstract class AbstractEvent implements Event, Serializable {
 	
 	@Override
 	public void addAttribute(String name, Object value) {
-		/*if(attributes.containsKey(name)) {
-			System.err.println("AbstractEvent: overwriting old "+name+" value="+attributes.get(name)+" with "+value);
-		}*/
 		attributes.put(name, value);
 	}
 	
@@ -60,7 +57,7 @@ public abstract class AbstractEvent implements Event, Serializable {
 			Object value = attributes.get(key);
 			if(value instanceof Serializable
 				|| value instanceof Externalizable) {
-				attr.put(key, value);
+				copy.addAttribute(key, value);
 			}
 		}
 		return copy;
