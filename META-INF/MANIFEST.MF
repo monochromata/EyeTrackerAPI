@@ -5,7 +5,8 @@ Bundle-SymbolicName: rit.eyeTracking;singleton:=true
 Bundle-Version: 0.1.5
 Bundle-Activator: rit.eyeTracking.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.junit
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: com.lmax.disruptor,
