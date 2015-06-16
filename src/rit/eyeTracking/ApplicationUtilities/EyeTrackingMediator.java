@@ -215,8 +215,8 @@ public abstract class EyeTrackingMediator<E extends Event> {
 	 */
 	public synchronized void start(EyeTrackingListener.Mode mode) {// throws GLException{
 
+		this.mode = mode;
 		if (runnable == null) {
-			this.mode = mode;
 			shouldStop = false;
 			
 			runnable = new RenderingLoop();
